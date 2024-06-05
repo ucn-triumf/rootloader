@@ -17,6 +17,10 @@ pip install .
 You will need to re-run the last line of the above upon every pull, unless you add the `-e` flag like this: `pip install -e .`
 Note that this may not work on all systems, particularly windows systems.
 
+## Documentation
+
+[See here](docs/README.md).
+
 ## Example
 
 ```python
