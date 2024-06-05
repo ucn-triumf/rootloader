@@ -5,7 +5,7 @@ requires = [
 build-backend = "hatchling.build"
 
 [project]
-name = "rootparse"
+name = "rootloader"
 authors  = [{name="Derek Fujimoto", email="dfujimoto@triumf.ca" }]
 description = "Read simple root files into memory"
 readme = "README.md"
