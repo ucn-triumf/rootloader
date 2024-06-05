@@ -1,0 +1,27 @@
+[build-system]
+requires = [
+    "hatchling",
+]
+build-backend = "hatchling.build"
+
+[project]
+name = "rootparse"
+authors  = [{name="Derek Fujimoto", email="dfujimoto@triumf.ca" }]
+description = "Read simple root files into memory"
+readme = "README.md"
+classifiers = [
+        "Programming Language :: Python :: 3",
+        "Operating System :: POSIX :: Linux",
+]
+license = {file = "LICENSE"}
+requires-python = ">=3.5"
+dependencies = ['numpy', 'pandas', 'tqdm', 'matplotlib']
+dynamic = ["version"]
+
+[project.urls]
+"Homepage" = "https://github.com/ucn-triumf/rootloader"
+"Bug Tracker" = "https://github.com/ucn-triumf/rootloader/issues"
+
+# set version
+[tool.hatch.version]
+path = "rootloader/version.py"
