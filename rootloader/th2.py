@@ -69,7 +69,7 @@ class th2(object):
     def __repr__(self):
         return f'{self.base_class}: "{self.name}", {self.entries} entries, sum = {self.sum}'
 
-    def draw(self, ax=None):
+    def plot(self, ax=None):
         """Draw the histogram
 
         Args:

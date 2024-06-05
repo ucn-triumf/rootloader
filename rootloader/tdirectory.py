@@ -8,6 +8,7 @@ from .th1 import th1
 from .th2 import th2
 import warnings, os
 import numpy as np
+from tqdm import tqdm
 
 class tdirectory(attrdict):
     """Contains root file data"""
@@ -20,7 +21,7 @@ class tdirectory(attrdict):
         """
 
         # read trees and histograms from data file
-        for key in directory.GetListOfKeys():
+        for key in tqdm(directory.GetListOfKeys(), desc=f'Loading {directory.GetName()}', leave=False):
             name = key.GetName()
             obj = directory.Get(name)
             classname = obj.ClassName()

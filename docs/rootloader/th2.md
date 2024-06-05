@@ -6,7 +6,7 @@
 
 - [th2](#th2)
   - [th2](#th2-1)
-    - [th2().draw](#th2()draw)
+    - [th2().plot](#th2()plot)
     - [th2().to_dataframe](#th2()to_dataframe)
 
 ## th2
@@ -37,7 +37,7 @@ class th2(object):
     def __init__(self, hist): ...
 ```
 
-### th2().draw
+### th2().plot
 
 [Show source in th2.py:72](../../rootloader/th2.py#L72)
 
@@ -50,7 +50,7 @@ Draw the histogram
 #### Signature
 
 ```python
-def draw(self, ax=None): ...
+def plot(self, ax=None): ...
 ```
 
 ### th2().to_dataframe

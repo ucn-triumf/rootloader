@@ -25,7 +25,7 @@ class ttree(attrdict):
         if entries == 0: return
 
         iterator = tqdm(zip(tree, range(entries)), total=entries, leave=False,
-                        desc=f'Reading {tree.GetName()}')
+                        desc=f'Loading {tree.GetName()}')
         data = pd.concat(map(self._extract_event, iterator))
 
         # setup tree structure in self
@@ -91,7 +91,14 @@ class ttree(attrdict):
         return pd.DataFrame(leaves, index=[entry])
 
     def get_subtree(self, entries):
-        """Return a copy of self but only for a subset of entries"""
+        """Return a copy of self but only for a subset of entries
+
+        Args:
+            entries (list|np.array): list of entries to get from tree
+
+        Returns:
+            ttree: copy with reduced entries
+        """
 
         copy = ttree()
 
@@ -104,6 +111,14 @@ class ttree(attrdict):
             else:
                 setattr(copy, brname, br.loc[entries])
         return copy
+
+    def plot(self, *args, **kwargs):
+        """Convert to dataframe and plot. Arguments passed to [pandas.DataFrame.plot](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.plot.html)
+
+        Returns:
+            same as pandas.DataFrame.plot
+        """
+        return self.to_dataframe().plot(*args, **kwargs)
 
     def to_dataframe(self):
         """Convert tree to pandas dataframe

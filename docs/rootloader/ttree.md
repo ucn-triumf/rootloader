@@ -7,6 +7,7 @@
 - [ttree](#ttree)
   - [ttree](#ttree-1)
     - [ttree().get_subtree](#ttree()get_subtree)
+    - [ttree().plot](#ttree()plot)
     - [ttree().to_dataframe](#ttree()to_dataframe)
 
 ## ttree
@@ -28,15 +29,39 @@ class ttree(attrdict):
 
 Return a copy of self but only for a subset of entries
 
+#### Arguments
+
+- `entries` *list|np.array* - list of entries to get from tree
+
+#### Returns
+
+- [ttree](#ttree) - copy with reduced entries
+
 #### Signature
 
 ```python
 def get_subtree(self, entries): ...
 ```
 
+### ttree().plot
+
+[Show source in ttree.py:115](../../rootloader/ttree.py#L115)
+
+Convert to dataframe and plot. Arguments passed to [pandas.DataFrame.plot](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.plot.html)
+
+#### Returns
+
+same as pandas.DataFrame.plot
+
+#### Signature
+
+```python
+def plot(self, *args, **kwargs): ...
+```
+
 ### ttree().to_dataframe
 
-[Show source in ttree.py:108](../../rootloader/ttree.py#L108)
+[Show source in ttree.py:124](../../rootloader/ttree.py#L124)
 
 Convert tree to pandas dataframe
 

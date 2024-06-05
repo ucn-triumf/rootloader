@@ -10,7 +10,7 @@
 
 ## tdirectory
 
-[Show source in tdirectory.py:12](../../rootloader/tdirectory.py#L12)
+[Show source in tdirectory.py:13](../../rootloader/tdirectory.py#L13)
 
 Contains root file data
 
@@ -23,7 +23,7 @@ class tdirectory(attrdict):
 
 ### tdirectory().to_dataframe
 
-[Show source in tdirectory.py:57](../../rootloader/tdirectory.py#L57)
+[Show source in tdirectory.py:58](../../rootloader/tdirectory.py#L58)
 
 Convert all objects possible (th1 and ttree) into pandas dataframes
 
