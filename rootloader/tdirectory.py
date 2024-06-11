@@ -73,7 +73,7 @@ class tdirectory(attrdict):
             # print
             s = 'contents:\n'
             for key in zip(*klist):
-                s += '\t'
+                s += ' '*4
                 s += ''.join(['{0: <{1}}'.format(k, maxsize) for k in key])
                 s += '\n'
             return s
