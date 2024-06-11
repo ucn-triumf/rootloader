@@ -13,6 +13,12 @@
 
 Contains root file data
 
+#### Arguments
+
+- `filename` *str* - path to root file to read
+- `as_dataframe` *bool* - if true, run to_dataframe upon read
+- `keep_empty_objs` *bool* - if true, don't save empty objects
+
 #### Signature
 
 ```python

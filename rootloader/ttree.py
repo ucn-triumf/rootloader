@@ -9,15 +9,13 @@ import pandas as pd
 import os
 
 class ttree(attrdict):
-    """Extract ROOT.TTree fully into memory"""
+    """Extract ROOT.TTree fully into memory
+
+    Args:
+        tree (ROOT.TTree): tree to load
+    """
 
     def __init__(self, tree):
-        """Constructor
-
-        Args:
-            tree (ROOT.TTree): tree to load
-        """
-
         self.__dict__ = {}
 
         # extraction of data

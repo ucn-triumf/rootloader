@@ -20,6 +20,10 @@
 
 Ease of access for ROOT.TLeaf
 
+#### Arguments
+
+- `leaf` *ROOT.TLeaf* - root leaf object
+
 #### Signature
 
 ```python
@@ -29,7 +33,7 @@ class tleaf(object):
 
 ### tleaf().branch
 
-[Show source in tleaf.py:22](../../rootloader/tleaf.py#L22)
+[Show source in tleaf.py:21](../../rootloader/tleaf.py#L21)
 
 #### Signature
 
@@ -40,7 +44,7 @@ def branch(self): ...
 
 ### tleaf().fullname
 
-[Show source in tleaf.py:24](../../rootloader/tleaf.py#L24)
+[Show source in tleaf.py:23](../../rootloader/tleaf.py#L23)
 
 #### Signature
 
@@ -51,7 +55,7 @@ def fullname(self): ...
 
 ### tleaf().get_entry
 
-[Show source in tleaf.py:18](../../rootloader/tleaf.py#L18)
+[Show source in tleaf.py:17](../../rootloader/tleaf.py#L17)
 
 #### Signature
 
@@ -61,7 +65,7 @@ def get_entry(self, i): ...
 
 ### tleaf().leaftype
 
-[Show source in tleaf.py:28](../../rootloader/tleaf.py#L28)
+[Show source in tleaf.py:27](../../rootloader/tleaf.py#L27)
 
 #### Signature
 
@@ -72,7 +76,7 @@ def leaftype(self): ...
 
 ### tleaf().len
 
-[Show source in tleaf.py:30](../../rootloader/tleaf.py#L30)
+[Show source in tleaf.py:29](../../rootloader/tleaf.py#L29)
 
 #### Signature
 
@@ -83,7 +87,7 @@ def len(self): ...
 
 ### tleaf().name
 
-[Show source in tleaf.py:26](../../rootloader/tleaf.py#L26)
+[Show source in tleaf.py:25](../../rootloader/tleaf.py#L25)
 
 #### Signature
 
@@ -94,7 +98,7 @@ def name(self): ...
 
 ### tleaf().value
 
-[Show source in tleaf.py:32](../../rootloader/tleaf.py#L32)
+[Show source in tleaf.py:31](../../rootloader/tleaf.py#L31)
 
 #### Signature
 

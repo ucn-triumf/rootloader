@@ -7,17 +7,15 @@ import os
 from .tdirectory import tdirectory
 
 class tfile(tdirectory):
-    """Contains root file data"""
+    """Contains root file data
+
+    Args:
+        filename (str): path to root file to read
+        as_dataframe (bool): if true, run to_dataframe upon read
+        keep_empty_objs (bool): if true, don't save empty objects
+    """
 
     def __init__(self, filename, as_dataframe=False, keep_empty_objs=True):
-        """Read the file
-
-        Args:
-            filename (str): path to root file to read
-            as_dataframe (bool): if true, run to_dataframe upon read
-            keep_empty_objs (bool): if true, don't save empty objects
-        """
-
         # check input
         if not os.path.isfile(filename):
             raise IOError(f'The path "{filename}" does not point to a file')

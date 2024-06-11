@@ -14,6 +14,11 @@
 
 Contains root file data
 
+#### Arguments
+
+- `directory` *ROOT.TDirectoryFile|ROOT.TFile* - object to parse
+- `keep_empty_objs` *bool* - if true, don't save empty objects
+
 #### Signature
 
 ```python
@@ -23,7 +28,7 @@ class tdirectory(attrdict):
 
 ### tdirectory().to_dataframe
 
-[Show source in tdirectory.py:76](../../rootloader/tdirectory.py#L76)
+[Show source in tdirectory.py:75](../../rootloader/tdirectory.py#L75)
 
 Convert all objects possible (th1 and ttree) into pandas dataframes
 

@@ -11,15 +11,14 @@ import numpy as np
 from tqdm import tqdm
 
 class tdirectory(attrdict):
-    """Contains root file data"""
+    """Contains root file data
 
-    def __init__(self, directory, keep_empty_objs=True):
-        """Read the directory
-
-        Args:
+    Args:
             directory (ROOT.TDirectoryFile|ROOT.TFile): object to parse
             keep_empty_objs (bool): if true, don't save empty objects
-        """
+    """
+
+    def __init__(self, directory, keep_empty_objs=True):
 
         # read trees and histograms from data file
         for key in tqdm(directory.GetListOfKeys(), desc=f'Loading {directory.GetName()}', leave=False):

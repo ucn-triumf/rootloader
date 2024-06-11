@@ -5,14 +5,13 @@
 import numpy as np
 
 class tleaf(object):
-    """Ease of access for ROOT.TLeaf"""
+    """Ease of access for ROOT.TLeaf
+
+    Args:
+        leaf (ROOT.TLeaf): root leaf object
+    """
 
     def __init__(self, leaf):
-        """leaf storage and ease of access
-
-        Args:
-            leaf (ROOT.TLeaf): root leaf object
-        """
         self._leaf = leaf
 
     def get_entry(self, i):

@@ -15,6 +15,10 @@
 
 Extract histogram data from ROOT.TH1 data type
 
+#### Arguments
+
+- `hist` *ROOT.TH2* - histogram to import
+
 #### Attributes
 
 - `bbase_class` *str* - output of TH1.Class_Name()
@@ -39,7 +43,7 @@ class th2(object):
 
 ### th2().plot
 
-[Show source in th2.py:72](../../rootloader/th2.py#L72)
+[Show source in th2.py:69](../../rootloader/th2.py#L69)
 
 Draw the histogram
 
@@ -55,7 +59,7 @@ def plot(self, ax=None): ...
 
 ### th2().to_dataframe
 
-[Show source in th2.py:91](../../rootloader/th2.py#L91)
+[Show source in th2.py:88](../../rootloader/th2.py#L88)
 
 Convert tree to pandas dataframe
 

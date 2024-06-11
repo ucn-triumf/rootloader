@@ -9,6 +9,9 @@ import numpy as np
 class th1(object):
     """Extract histogram data from ROOT.TH1 data type
 
+    Args:
+        hist (ROOT.TH1): histogram to import
+
     Attributes:
         bbase_class (str): output of TH1.Class_Name()
         entries (int): output of TH1.GetEntries()
@@ -32,11 +35,6 @@ class th1(object):
                      }
 
     def __init__(self, hist):
-        """Constructor
-
-        Args:
-            hist (ROOT.TH1): histogram to import"""
-
         self.base_class = hist.Class_Name()
         self.entries = int(hist.GetEntries())
         self.name = hist.GetName()
