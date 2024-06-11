@@ -4,7 +4,10 @@ class attrdict(dict):
     """
 
     def __getattr__(self, name):
-        return self[name]
+        if name in self.keys():
+            return self[name]
+        else:
+            return getattr(dict, name)
 
     __setattr__ = dict.__setitem__
     __delattr__ = dict.__delitem__

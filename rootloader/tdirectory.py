@@ -74,7 +74,7 @@ class tdirectory(attrdict):
 
             # get number of columns based on terminal size
             maxsize = max((len(k) for k in klist)) + 2
-            terminal_width = os.get_terminal_size().columns
+            terminal_width = os.get_terminal_size().columns - 4 # indent by 4 spaces below
             ncolumns = int(np.floor(terminal_width / maxsize))
             ncolumns = min(ncolumns, len(klist))
 
