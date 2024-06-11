@@ -13,11 +13,12 @@ from tqdm import tqdm
 class tdirectory(attrdict):
     """Contains root file data"""
 
-    def __init__(self, directory):
+    def __init__(self, directory, keep_empty_objs=True):
         """Read the directory
 
         Args:
             directory (ROOT.TDirectoryFile|ROOT.TFile): object to parse
+            keep_empty_objs (bool): if true, don't save empty objects
         """
 
         # read trees and histograms from data file
@@ -26,14 +27,31 @@ class tdirectory(attrdict):
             obj = directory.Get(name)
             classname = obj.ClassName()
 
+            # TTree
             if 'TTree' == classname:
-                self[name] = ttree(obj)
+                if keep_empty_objs or obj.GetEntries() > 0:
+                    self[name] = ttree(obj)
+                else:
+                    tqdm.write(f'Skipped "{name}" due to lack of entries')
+
+            # TH1
             elif 'TH1' in classname:
-                self[name] = th1(obj)
+                if keep_empty_objs or obj.GetSum() > 0:
+                    self[name] = th1(obj)
+                else:
+                    tqdm.write(f'Skipped "{name}" due to lack of entries')
+
+            # TH2
             elif 'TH2' in classname:
-                self[name] = th2(obj)
+                if keep_empty_objs or obj.GetSum() > 0:
+                    self[name] = th2(obj)
+                else:
+                    tqdm.write(f'Skipped "{name}" due to lack of entries')
+
+            # TDirectory
             elif 'TDirectoryFile' == classname:
                 self[name] = tdirectory(obj)
+
             else:
                 warnings.warn(f'Unknown class "{classname}" for key "{name}".')
 

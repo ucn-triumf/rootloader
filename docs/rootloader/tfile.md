@@ -9,7 +9,7 @@
 
 ## tfile
 
-[Show source in tfile.py:8](../../rootloader/tfile.py#L8)
+[Show source in tfile.py:9](../../rootloader/tfile.py#L9)
 
 Contains root file data
 
@@ -17,5 +17,5 @@ Contains root file data
 
 ```python
 class tfile(tdirectory):
-    def __init__(self, filename, as_dataframe=False): ...
+    def __init__(self, filename, as_dataframe=False, keep_empty_objs=True): ...
 ```

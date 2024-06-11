@@ -18,12 +18,12 @@ Contains root file data
 
 ```python
 class tdirectory(attrdict):
-    def __init__(self, directory): ...
+    def __init__(self, directory, keep_empty_objs=True): ...
 ```
 
 ### tdirectory().to_dataframe
 
-[Show source in tdirectory.py:58](../../rootloader/tdirectory.py#L58)
+[Show source in tdirectory.py:76](../../rootloader/tdirectory.py#L76)
 
 Convert all objects possible (th1 and ttree) into pandas dataframes
 
