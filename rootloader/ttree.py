@@ -16,7 +16,9 @@ class ttree(attrdict):
     """
 
     def __init__(self, tree):
-        self.__dict__ = {}
+
+        if tree is None:
+            return
 
         # extraction of data
         entries = tree.GetEntries()
@@ -34,16 +36,14 @@ class ttree(attrdict):
 
             if len(list(branch.keys())) > 1:
                 setattr(self, br.GetName(), branch)
-                self.__dict__[br.GetName()] = branch
             else:
                 setattr(self, br.GetName(), branch[leaf.GetName()])
-                self.__dict__[br.GetName()] = branch[leaf.GetName()]
 
     def __dir__(self):
         return sorted(self.keys())
 
     def __repr__(self):
-        klist = [k for k in self.keys() if k != '__dict__']
+        klist = [k for k in self.keys()]
         if klist:
             klist.sort()
             maxsize = max((len(k) for k in klist)) + 2
@@ -98,9 +98,9 @@ class ttree(attrdict):
             ttree: copy with reduced entries
         """
 
-        copy = ttree()
+        copy = ttree(None)
 
-        for brname, br in self.__dict__.items():
+        for brname, br in self.items():
             if type(br) is attrdict:
                 newbr = attrdict()
                 for leafname, leaf in br.items():
@@ -126,7 +126,6 @@ class ttree(attrdict):
         """
 
         df = pd.DataFrame(self)
-        df.drop(columns='__dict__', inplace=True)
         if 'timestamp' in df.columns:
             df.set_index('timestamp', inplace=True)
         return df
