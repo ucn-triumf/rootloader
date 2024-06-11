@@ -20,9 +20,22 @@ class tdirectory(attrdict):
 
     def __init__(self, directory, keep_empty_objs=True):
 
-        # read trees and histograms from data file
-        for key in tqdm(directory.GetListOfKeys(), desc=f'Loading {directory.GetName()}', leave=False):
+        # get keys and read only those with highest cycle number
+        keys = {}
+        for key in directory.GetListOfKeys():
             name = key.GetName()
+
+            # keep key if not yet in dict
+            if name not in keys.keys():
+                keys[name] = key
+            else:
+
+                # keep key with largest cycle number
+                if key.GetCycle() > keys[name].GetCycle():
+                    keys[name] = key
+
+        # read trees and histograms from data file
+        for name, key in tqdm(keys.items(), desc=f'Loading {directory.GetName()}', leave=False):
             obj = directory.Get(name)
             classname = obj.ClassName()
 
