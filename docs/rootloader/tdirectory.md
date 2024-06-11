@@ -28,7 +28,7 @@ class tdirectory(attrdict):
 
 ### tdirectory().to_dataframe
 
-[Show source in tdirectory.py:75](../../rootloader/tdirectory.py#L75)
+[Show source in tdirectory.py:83](../../rootloader/tdirectory.py#L83)
 
 Convert all objects possible (th1 and ttree) into pandas dataframes
 

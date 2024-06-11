@@ -58,13 +58,21 @@ class tdirectory(attrdict):
         klist = list(self.keys())
         if klist:
             klist.sort()
+
+            # get number of columns based on terminal size
             maxsize = max((len(k) for k in klist)) + 2
             terminal_width = os.get_terminal_size().columns
             ncolumns = int(np.floor(terminal_width / maxsize))
             ncolumns = min(ncolumns, len(klist))
 
+            # split into chunks
+            needed_len = int(np.ceil(len(klist) / ncolumns)*ncolumns) - len(klist)
+            klist = np.concatenate((klist, np.full(needed_len, '')))
+            klist = np.array_split(klist, ncolumns)
+
+            # print
             s = 'contents:\n'
-            for key in zip(*[klist[i::ncolumns] for i in range(ncolumns)]):
+            for key in zip(*klist):
                 s += '\t'
                 s += ''.join(['{0: <{1}}'.format(k, maxsize) for k in key])
                 s += '\n'
