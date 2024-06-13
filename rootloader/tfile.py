@@ -12,10 +12,10 @@ class tfile(tdirectory):
     Args:
         filename (str): path to root file to read
         as_dataframe (bool): if true, run to_dataframe upon read
-        keep_empty_objs (bool): if true, don't save empty objects
+        empty_ok (bool): if true, don't save empty objects
     """
 
-    def __init__(self, filename, as_dataframe=False, keep_empty_objs=True):
+    def __init__(self, filename, as_dataframe=False, empty_ok=True):
         # check input
         if not os.path.isfile(filename):
             raise IOError(f'The path "{filename}" does not point to a file')
@@ -24,7 +24,7 @@ class tfile(tdirectory):
         fid = ROOT.TFile(filename, 'READ')
 
         # get contents
-        super().__init__(fid, keep_empty_objs=keep_empty_objs)
+        super().__init__(fid, empty_ok=empty_ok)
 
         # close the file
         fid.Close()

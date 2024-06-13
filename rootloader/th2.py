@@ -42,9 +42,9 @@ class th2(object):
         self.ylabel = hist.GetYaxis().GetName()
         self.zlabel = hist.GetZaxis().GetName()
 
-        self.x = np.fromiter((hist.GetXaxis().GetBinCenter(i) for i in range(self.nbinsx)),
+        self.x = np.fromiter(map(hist.GetXaxis().GetBinCenter, range(self.nbinsx)),
                              dtype=float, count=self.nbinsx)
-        self.y = np.fromiter((hist.GetYaxis().GetBinCenter(i) for i in range(self.nbinsy)),
+        self.y = np.fromiter(map(hist.GetYaxis().GetBinCenter, range(self.nbinsy)),
                              dtype=float, count=self.nbinsy)
 
         self.z = np.fromiter((hist.GetBinContent(i, j)  for i in range(self.nbinsx)
@@ -66,24 +66,40 @@ class th2(object):
     def __repr__(self):
         return f'{self.base_class}: "{self.name}", {self.entries} entries, sum = {self.sum}'
 
-    def plot(self, ax=None):
+    def plot(self, ax=None, flat=True, **kwargs):
         """Draw the histogram
 
         Args:
             ax (plt.Axes): if None, draw in current axes, else draw on ax
+            flat (bool): if True, draw 2D, else 3D
+            kwargs: if flat: passed to ax.pcolormesh
+                    else:    passed to ax.plot_surface
         """
 
-        # get axes
-        if ax is None:
-            ax = plt.gcf().add_subplot(projection='3d')
-
-        # draw
         xx, yy = np.meshgrid(self.x, self.y)
 
-        ax.plot_surface(xx, yy, self.z)
-        ax.set_xlabel(self.xlabel)
-        ax.set_ylabel(self.ylabel)
-        ax.set_zlabel(self.zlabel)
+        # draw flat
+        if flat:
+            if ax is None:
+                ax = plt.gcf().add_subplot()
+
+            # defaults
+            if 'cmap' not in kwargs.keys(): kwargs['cmap'] = 'RdBu'
+
+            c = ax.pcolormesh(xx, yy, self.z, **kwargs)
+            ax.axis([self.x.min(), self.x.max(), self.y.min(), self.y.max()])
+            plt.gcf().colorbar(c, ax=ax)
+
+        # draw 3d
+        else:
+
+            if ax is None:
+                ax = plt.gcf().add_subplot(projection='3d')
+
+            ax.plot_surface(xx, yy, self.z, **kwargs)
+            ax.set_xlabel(self.xlabel)
+            ax.set_ylabel(self.ylabel)
+            ax.set_zlabel(self.zlabel)
 
     def to_dataframe(self):
         """Convert tree to pandas dataframe

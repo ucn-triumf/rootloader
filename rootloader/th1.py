@@ -44,13 +44,13 @@ class th1(object):
         self.xlabel = hist.GetXaxis().GetName()
         self.ylabel = hist.GetYaxis().GetName()
 
-        self.x = np.fromiter((hist.GetBinCenter(i) for i in range(self.nbins)),
+        self.x = np.fromiter(map(hist.GetBinCenter, range(self.nbins)),
                              dtype=float,
                              count=self.nbins)
-        self.y = np.fromiter((hist.GetBinContent(i) for i in range(self.nbins)),
+        self.y = np.fromiter(map(hist.GetBinContent, range(self.nbins)),
                              dtype=float,
                              count=self.nbins)
-        self.dy = np.fromiter((hist.GetBinError(i) for i in range(self.nbins)),
+        self.dy = np.fromiter(map(hist.GetBinError, range(self.nbins)),
                              dtype=float,
                              count=self.nbins)
 

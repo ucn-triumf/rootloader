@@ -7,6 +7,7 @@ from tqdm import tqdm
 import numpy as np
 import pandas as pd
 import os
+import ROOT
 
 class ttree(attrdict):
     """Extract ROOT.TTree fully into memory
@@ -20,24 +21,29 @@ class ttree(attrdict):
         if tree is None:
             return
 
-        # extraction of data
-        entries = tree.GetEntries()
-        if entries == 0: return
+        # extraction of data: fast
+        try:
+            data = self._extract_event_fast(tree)
 
-        iterator = tqdm(zip(tree, range(entries)), total=entries, leave=False,
-                        desc=f'Loading {tree.GetName()}')
-        data = pd.concat(map(self._extract_event, iterator))
+        # if there is a problem, revert to slower, but more robust version
+        except Exception:
+            entries = tree.GetEntries()
+            if entries == 0: return
 
-        # setup tree structure in self
-        for br in tree.GetListOfBranches():
-            branch = attrdict()
-            for leaf in br.GetListOfLeaves():
-                branch[leaf.GetName()] = data.loc[:, f'{leaf.GetFullName()}']
+            iterator = tqdm(zip(tree, range(entries)), total=entries, leave=False,
+                            desc=f'Loading {tree.GetName()}')
+            data = pd.concat(map(self._extract_event, iterator))
 
-            if len(list(branch.keys())) > 1:
-                setattr(self, br.GetName(), branch)
-            else:
-                setattr(self, br.GetName(), branch[leaf.GetName()])
+            # setup tree structure in self
+            for br in tree.GetListOfBranches():
+                branch = attrdict()
+                for leaf in br.GetListOfLeaves():
+                    branch[leaf.GetName()] = data.loc[:, f'{leaf.GetFullName()}']
+
+                if len(list(branch.keys())) > 1:
+                    setattr(self, br.GetName(), branch)
+                else:
+                    setattr(self, br.GetName(), branch[leaf.GetName()])
 
     def __dir__(self):
         return sorted(self.keys())
@@ -67,6 +73,12 @@ class ttree(attrdict):
             return s
         else:
             return self.__class__.__name__ + "()"
+
+    def _extract_event_fast(self, tree):
+        # fast version of getting events using RDataFrame
+        data = ROOT.RDataFrame(tree).AsNumpy()
+        for key, value in data.items():
+            setattr(self, key, pd.Series(value))
 
     def _extract_event(self, tree_entry):
         leaves = {}
