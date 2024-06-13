@@ -50,16 +50,19 @@ Draw the histogram
 #### Arguments
 
 - `ax` *plt.Axes* - if None, draw in current axes, else draw on ax
+- `flat` *bool* - if True, draw 2D, else 3D
+- `kwargs` - if flat: passed to ax.pcolormesh
+        - `else` - passed to ax.plot_surface
 
 #### Signature
 
 ```python
-def plot(self, ax=None): ...
+def plot(self, ax=None, flat=True, **kwargs): ...
 ```
 
 ### th2().to_dataframe
 
-[Show source in th2.py:88](../../rootloader/th2.py#L88)
+[Show source in th2.py:104](../../rootloader/th2.py#L104)
 
 Convert tree to pandas dataframe
 

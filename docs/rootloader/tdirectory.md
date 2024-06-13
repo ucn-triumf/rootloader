@@ -17,13 +17,13 @@ Contains root file data
 #### Arguments
 
 - `directory` *ROOT.TDirectoryFile|ROOT.TFile* - object to parse
-- `keep_empty_objs` *bool* - if true, don't save empty objects
+- `empty_ok` *bool* - if true, save empty objects
 
 #### Signature
 
 ```python
 class tdirectory(attrdict):
-    def __init__(self, directory, keep_empty_objs=True): ...
+    def __init__(self, directory, empty_ok=True): ...
 ```
 
 ### tdirectory().to_dataframe

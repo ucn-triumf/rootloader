@@ -17,11 +17,11 @@ Contains root file data
 
 - `filename` *str* - path to root file to read
 - `as_dataframe` *bool* - if true, run to_dataframe upon read
-- `keep_empty_objs` *bool* - if true, don't save empty objects
+- `empty_ok` *bool* - if true, don't save empty objects
 
 #### Signature
 
 ```python
 class tfile(tdirectory):
-    def __init__(self, filename, as_dataframe=False, keep_empty_objs=True): ...
+    def __init__(self, filename, as_dataframe=False, empty_ok=True): ...
 ```

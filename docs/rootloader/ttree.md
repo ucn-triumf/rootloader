@@ -12,7 +12,7 @@
 
 ## ttree
 
-[Show source in ttree.py:11](../../rootloader/ttree.py#L11)
+[Show source in ttree.py:12](../../rootloader/ttree.py#L12)
 
 Extract ROOT.TTree fully into memory
 
@@ -29,7 +29,7 @@ class ttree(attrdict):
 
 ### ttree().get_subtree
 
-[Show source in ttree.py:98](../../rootloader/ttree.py#L98)
+[Show source in ttree.py:112](../../rootloader/ttree.py#L112)
 
 Return a copy of self but only for a subset of entries
 
@@ -49,7 +49,7 @@ def get_subtree(self, entries): ...
 
 ### ttree().plot
 
-[Show source in ttree.py:120](../../rootloader/ttree.py#L120)
+[Show source in ttree.py:134](../../rootloader/ttree.py#L134)
 
 Convert to dataframe and plot. Arguments passed to [pandas.DataFrame.plot](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.plot.html)
 
@@ -65,7 +65,7 @@ def plot(self, *args, **kwargs): ...
 
 ### ttree().to_dataframe
 
-[Show source in ttree.py:128](../../rootloader/ttree.py#L128)
+[Show source in ttree.py:142](../../rootloader/ttree.py#L142)
 
 Convert tree to pandas dataframe
 
