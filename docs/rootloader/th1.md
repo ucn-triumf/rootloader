@@ -50,17 +50,18 @@ Draw the histogram
 #### Arguments
 
 - `ax` *plt.Axes* - if None, draw in current axes, else draw on ax
+- `data_only` *bool* - if true don't set axis labels, title
 - `kwargs` - passed to matplotlib.pyplot.errorbar
 
 #### Signature
 
 ```python
-def plot(self, ax=None, **kwargs): ...
+def plot(self, ax=None, data_only=False, **kwargs): ...
 ```
 
 ### th1().to_dataframe
 
-[Show source in th1.py:83](../../rootloader/th1.py#L83)
+[Show source in th1.py:91](../../rootloader/th1.py#L91)
 
 Convert tree to pandas dataframe
 

@@ -38,9 +38,9 @@ class th2(object):
         self.nbinsx = int(hist.GetNbinsX())
         self.nbinsy = int(hist.GetNbinsY())
         self.title = hist.GetTitle()
-        self.xlabel = hist.GetXaxis().GetName()
-        self.ylabel = hist.GetYaxis().GetName()
-        self.zlabel = hist.GetZaxis().GetName()
+        self.xlabel = hist.GetXaxis().GetTitle()
+        self.ylabel = hist.GetYaxis().GetTitle()
+        self.zlabel = hist.GetZaxis().GetTitle()
 
         self.x = np.fromiter(map(hist.GetXaxis().GetBinCenter, range(self.nbinsx)),
                              dtype=float, count=self.nbinsx)
@@ -89,6 +89,9 @@ class th2(object):
             c = ax.pcolormesh(xx, yy, self.z, **kwargs)
             ax.axis([self.x.min(), self.x.max(), self.y.min(), self.y.max()])
             plt.gcf().colorbar(c, ax=ax)
+            ax.set_xlabel(self.xlabel)
+            ax.set_ylabel(self.ylabel)
+            ax.set_title(self.title)
 
         # draw 3d
         else:

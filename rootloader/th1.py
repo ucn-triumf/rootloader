@@ -41,8 +41,8 @@ class th1(object):
         self.sum = hist.GetSum()
         self.nbins = int(hist.GetNbinsX())
         self.title = hist.GetTitle()
-        self.xlabel = hist.GetXaxis().GetName()
-        self.ylabel = hist.GetYaxis().GetName()
+        self.xlabel = hist.GetXaxis().GetTitle()
+        self.ylabel = hist.GetYaxis().GetTitle()
 
         self.x = np.fromiter(map(hist.GetBinCenter, range(self.nbins)),
                              dtype=float,
@@ -60,11 +60,12 @@ class th1(object):
     def __repr__(self):
         return f'{self.base_class}: "{self.name}", {self.entries} entries, sum = {self.sum}'
 
-    def plot(self, ax=None, **kwargs):
+    def plot(self, ax=None, data_only=False, **kwargs):
         """Draw the histogram
 
         Args:
             ax (plt.Axes): if None, draw in current axes, else draw on ax
+            data_only (bool): if true don't set axis labels, title
             kwargs: passed to matplotlib.pyplot.errorbar
         """
 
@@ -79,6 +80,13 @@ class th1(object):
 
         # draw
         ax.errorbar(self.x, self.y, self.dy, **kwargs)
+
+        # plot elements
+        if not data_only:
+            ax.set_xlabel(self.xlabel)
+            ax.set_ylabel(self.ylabel)
+            ax.set_title(self.title, fontsize='x-small')
+            plt.tight_layout()
 
     def to_dataframe(self):
         """Convert tree to pandas dataframe

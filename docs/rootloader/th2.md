@@ -62,7 +62,7 @@ def plot(self, ax=None, flat=True, **kwargs): ...
 
 ### th2().to_dataframe
 
-[Show source in th2.py:104](../../rootloader/th2.py#L104)
+[Show source in th2.py:107](../../rootloader/th2.py#L107)
 
 Convert tree to pandas dataframe
 
