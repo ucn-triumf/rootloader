@@ -16,9 +16,10 @@ class tdirectory(attrdict):
     Args:
             directory (ROOT.TDirectoryFile|ROOT.TFile): object to parse
             empty_ok (bool): if true, save empty objects
+            quiet (bool): if true, don't print skipped statement if object empty
     """
 
-    def __init__(self, directory, empty_ok=True):
+    def __init__(self, directory, empty_ok=True, quiet=True):
 
         # get keys and read only those with highest cycle number
         keys = {}
@@ -43,21 +44,21 @@ class tdirectory(attrdict):
             if 'TTree' == classname:
                 if empty_ok or obj.GetEntries() > 0:
                     self[name] = ttree(obj)
-                else:
+                elif not quiet:
                     tqdm.write(f'Skipped "{name}" due to lack of entries')
 
             # TH1
             elif 'TH1' in classname:
                 if empty_ok or obj.GetSum() > 0:
                     self[name] = th1(obj)
-                else:
+                elif not quiet:
                     tqdm.write(f'Skipped "{name}" due to lack of entries')
 
             # TH2
             elif 'TH2' in classname:
                 if empty_ok or obj.GetSum() > 0:
                     self[name] = th2(obj)
-                else:
+                elif not quiet:
                     tqdm.write(f'Skipped "{name}" due to lack of entries')
 
             # TDirectory

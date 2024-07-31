@@ -18,10 +18,11 @@ Contains root file data
 - `filename` *str* - path to root file to read
 - `as_dataframe` *bool* - if true, run to_dataframe upon read
 - `empty_ok` *bool* - if true, don't save empty objects
+- `quiet` *bool* - if true, don't print skipped statement if object empty
 
 #### Signature
 
 ```python
 class tfile(tdirectory):
-    def __init__(self, filename, as_dataframe=False, empty_ok=True): ...
+    def __init__(self, filename, as_dataframe=False, empty_ok=True, quiet=True): ...
 ```

@@ -18,17 +18,18 @@ Contains root file data
 
 - `directory` *ROOT.TDirectoryFile|ROOT.TFile* - object to parse
 - `empty_ok` *bool* - if true, save empty objects
+- `quiet` *bool* - if true, don't print skipped statement if object empty
 
 #### Signature
 
 ```python
 class tdirectory(attrdict):
-    def __init__(self, directory, empty_ok=True): ...
+    def __init__(self, directory, empty_ok=True, quiet=True): ...
 ```
 
 ### tdirectory().to_dataframe
 
-[Show source in tdirectory.py:96](../../rootloader/tdirectory.py#L96)
+[Show source in tdirectory.py:97](../../rootloader/tdirectory.py#L97)
 
 Convert all objects possible (th1 and ttree) into pandas dataframes
 
