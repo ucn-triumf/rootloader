@@ -35,3 +35,12 @@ class attrdict(dict):
     def __dir__(self):
         return list(self.keys())
 
+    def copy(self):
+        """Make a copy of this object"""
+        copy = attrdict()
+        for key, value in self.items():
+            if hasattr(value, 'copy'):
+                copy[key] = value.copy()
+            else:
+                copy[key] = value
+        return copy
