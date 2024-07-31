@@ -20,7 +20,7 @@ Extract ROOT.TTree fully into memory
 
 #### Arguments
 
-- `tree` *ROOT.TTree* - tree to load
+- `tree` *ROOT.TTree|pd.DataFrame* - tree to load
 
 #### Signature
 
@@ -31,7 +31,7 @@ class ttree(attrdict):
 
 ### ttree().copy
 
-[Show source in ttree.py:112](../../rootloader/ttree.py#L112)
+[Show source in ttree.py:122](../../rootloader/ttree.py#L122)
 
 Produce a copy of this object
 
@@ -43,7 +43,7 @@ def copy(self): ...
 
 ### ttree().entries
 
-[Show source in ttree.py:123](../../rootloader/ttree.py#L123)
+[Show source in ttree.py:133](../../rootloader/ttree.py#L133)
 
 #### Signature
 
@@ -54,7 +54,7 @@ def entries(self): ...
 
 ### ttree().get_subtree
 
-[Show source in ttree.py:126](../../rootloader/ttree.py#L126)
+[Show source in ttree.py:136](../../rootloader/ttree.py#L136)
 
 Return a copy of self but only for a subset of entries
 
@@ -74,7 +74,7 @@ def get_subtree(self, entries): ...
 
 ### ttree().plot
 
-[Show source in ttree.py:148](../../rootloader/ttree.py#L148)
+[Show source in ttree.py:158](../../rootloader/ttree.py#L158)
 
 Convert to dataframe and plot. Arguments passed to [pandas.DataFrame.plot](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.plot.html)
 
@@ -90,7 +90,7 @@ def plot(self, *args, **kwargs): ...
 
 ### ttree().to_dataframe
 
-[Show source in ttree.py:156](../../rootloader/ttree.py#L156)
+[Show source in ttree.py:166](../../rootloader/ttree.py#L166)
 
 Convert tree to pandas dataframe
 

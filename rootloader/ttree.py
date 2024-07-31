@@ -13,12 +13,22 @@ class ttree(attrdict):
     """Extract ROOT.TTree fully into memory
 
     Args:
-        tree (ROOT.TTree): tree to load
+        tree (ROOT.TTree|pd.DataFrame): tree to load
     """
 
     def __init__(self, tree=None):
 
         if tree is None:
+            return
+
+        # extract from dataframe
+        if type(tree) is pd.DataFrame:
+            for col in tree.columns:
+                setattr(self, col, pd.Series(tree[col]))
+
+            if tree.index.name not in ('', None):
+                setattr(self, tree.index.name, pd.Series(tree.index))
+
             return
 
         # extraction of data: fast
