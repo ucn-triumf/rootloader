@@ -16,7 +16,7 @@ class ttree(attrdict):
         tree (ROOT.TTree): tree to load
     """
 
-    def __init__(self, tree):
+    def __init__(self, tree=None):
 
         if tree is None:
             return
@@ -27,7 +27,7 @@ class ttree(attrdict):
 
         # if there is a problem, revert to slower, but more robust version
         except Exception:
-            
+
             tqdm.write("Reverting to robust ttree reader")
             entries = tree.GetEntries()
             if entries == 0: return
@@ -109,6 +109,20 @@ class ttree(attrdict):
 
         return pd.DataFrame(leaves, index=[entry])
 
+    def copy(self):
+        """Produce a copy of this object"""
+        copy = ttree()
+        for key, value in self.items():
+            if hasattr(value, 'copy'):
+                copy[key] = value.copy()
+            else:
+                copy[key] = value
+
+        return copy
+
+    @property
+    def entries(self): return len(self[tuple(self.keys())[0]])
+
     def get_subtree(self, entries):
         """Return a copy of self but only for a subset of entries
 
@@ -146,7 +160,12 @@ class ttree(attrdict):
             pd.DataFrame
         """
 
-        df = pd.DataFrame(self)
-        if 'timestamp' in df.columns:
-            df.set_index('timestamp', inplace=True)
+        try:
+            df = pd.DataFrame(self)
+        except ValueError:
+            df = pd.Series(self)
+
+        if type(df) is pd.DataFrame:
+            if 'timestamp' in df.columns:
+                df.set_index('timestamp', inplace=True)
         return df

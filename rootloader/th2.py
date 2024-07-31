@@ -30,7 +30,10 @@ class th2(object):
     __slots__ = ['x', 'y', 'z', 'dz', 'entries', 'name', 'nbinsx', 'nbinsy',
                  'title', 'xlabel', 'ylabel', 'zlabel', 'sum', 'base_class']
 
-    def __init__(self, hist):
+    def __init__(self, hist=None):
+
+        if hist is None: return
+
         self.base_class = hist.Class_Name()
         self.entries = int(hist.GetEntries())
         self.name = hist.GetName()
@@ -65,6 +68,16 @@ class th2(object):
 
     def __repr__(self):
         return f'{self.base_class}: "{self.name}", {self.entries} entries, sum = {self.sum}'
+
+    def copy(self):
+        """Produce a copy of this object"""
+        copy = th2()
+        for sl in self.__slots__:
+            val = getattr(self, sl)
+            if hasattr(val, 'copy'):    setattr(copy, sl, val.copy())
+            else:                       setattr(copy, sl, val)
+
+        return copy
 
     def plot(self, ax=None, flat=True, **kwargs):
         """Draw the histogram

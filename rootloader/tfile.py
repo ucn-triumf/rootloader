@@ -17,6 +17,9 @@ class tfile(tdirectory):
     """
 
     def __init__(self, filename, as_dataframe=False, empty_ok=True, quiet=True):
+
+        if filename is None: return
+
         # check input
         if not os.path.isfile(filename):
             raise IOError(f'The path "{filename}" does not point to a file')
@@ -33,3 +36,12 @@ class tfile(tdirectory):
         # convert to dataframe
         if as_dataframe:
             self.to_dataframe()
+
+    def copy(self):
+        """Make a copy of this object"""
+
+        copy = tfile(None)
+        for key, value in self.items():
+            if hasattr(value, 'copy'):  copy[key] = value.copy()
+            else:                       copy[key] = value
+        return copy

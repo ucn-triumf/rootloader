@@ -21,6 +21,8 @@ class tdirectory(attrdict):
 
     def __init__(self, directory, empty_ok=True, quiet=True):
 
+        if directory is None: return
+
         # get keys and read only those with highest cycle number
         keys = {}
         for key in directory.GetListOfKeys():
@@ -93,6 +95,15 @@ class tdirectory(attrdict):
             return s
         else:
             return self.__class__.__name__ + "()"
+
+    def copy(self):
+        """Make a copy of this object"""
+
+        copy = tdirectory(None)
+        for key, value in self.items():
+            if hasattr(value, 'copy'):  copy[key] = value.copy()
+            else:                       copy[key] = value
+        return copy
 
     def to_dataframe(self):
         """Convert all objects possible (th1 and ttree) into pandas dataframes"""
