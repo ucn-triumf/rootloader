@@ -6,6 +6,7 @@
 
 - [tdirectory](#tdirectory)
   - [tdirectory](#tdirectory-1)
+    - [tdirectory().copy](#tdirectory()copy)
     - [tdirectory().to_dataframe](#tdirectory()to_dataframe)
 
 ## tdirectory
@@ -27,9 +28,21 @@ class tdirectory(attrdict):
     def __init__(self, directory, empty_ok=True, quiet=True): ...
 ```
 
+### tdirectory().copy
+
+[Show source in tdirectory.py:99](../../rootloader/tdirectory.py#L99)
+
+Make a copy of this object
+
+#### Signature
+
+```python
+def copy(self): ...
+```
+
 ### tdirectory().to_dataframe
 
-[Show source in tdirectory.py:97](../../rootloader/tdirectory.py#L97)
+[Show source in tdirectory.py:108](../../rootloader/tdirectory.py#L108)
 
 Convert all objects possible (th1 and ttree) into pandas dataframes
 

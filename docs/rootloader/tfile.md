@@ -6,6 +6,7 @@
 
 - [tfile](#tfile)
   - [tfile](#tfile-1)
+    - [tfile().copy](#tfile()copy)
 
 ## tfile
 
@@ -25,4 +26,16 @@ Contains root file data
 ```python
 class tfile(tdirectory):
     def __init__(self, filename, as_dataframe=False, empty_ok=True, quiet=True): ...
+```
+
+### tfile().copy
+
+[Show source in tfile.py:40](../../rootloader/tfile.py#L40)
+
+Make a copy of this object
+
+#### Signature
+
+```python
+def copy(self): ...
 ```

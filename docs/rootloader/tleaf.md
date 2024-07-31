@@ -7,6 +7,7 @@
 - [tleaf](#tleaf)
   - [tleaf](#tleaf-1)
     - [tleaf().branch](#tleaf()branch)
+    - [tleaf().copy](#tleaf()copy)
     - [tleaf().fullname](#tleaf()fullname)
     - [tleaf().get_entry](#tleaf()get_entry)
     - [tleaf().leaftype](#tleaf()leaftype)
@@ -33,7 +34,7 @@ class tleaf(object):
 
 ### tleaf().branch
 
-[Show source in tleaf.py:21](../../rootloader/tleaf.py#L21)
+[Show source in tleaf.py:25](../../rootloader/tleaf.py#L25)
 
 #### Signature
 
@@ -42,9 +43,21 @@ class tleaf(object):
 def branch(self): ...
 ```
 
+### tleaf().copy
+
+[Show source in tleaf.py:17](../../rootloader/tleaf.py#L17)
+
+Make a copy of this object
+
+#### Signature
+
+```python
+def copy(self): ...
+```
+
 ### tleaf().fullname
 
-[Show source in tleaf.py:23](../../rootloader/tleaf.py#L23)
+[Show source in tleaf.py:27](../../rootloader/tleaf.py#L27)
 
 #### Signature
 
@@ -55,7 +68,7 @@ def fullname(self): ...
 
 ### tleaf().get_entry
 
-[Show source in tleaf.py:17](../../rootloader/tleaf.py#L17)
+[Show source in tleaf.py:21](../../rootloader/tleaf.py#L21)
 
 #### Signature
 
@@ -65,7 +78,7 @@ def get_entry(self, i): ...
 
 ### tleaf().leaftype
 
-[Show source in tleaf.py:27](../../rootloader/tleaf.py#L27)
+[Show source in tleaf.py:31](../../rootloader/tleaf.py#L31)
 
 #### Signature
 
@@ -76,7 +89,7 @@ def leaftype(self): ...
 
 ### tleaf().len
 
-[Show source in tleaf.py:29](../../rootloader/tleaf.py#L29)
+[Show source in tleaf.py:33](../../rootloader/tleaf.py#L33)
 
 #### Signature
 
@@ -87,7 +100,7 @@ def len(self): ...
 
 ### tleaf().name
 
-[Show source in tleaf.py:25](../../rootloader/tleaf.py#L25)
+[Show source in tleaf.py:29](../../rootloader/tleaf.py#L29)
 
 #### Signature
 
@@ -98,7 +111,7 @@ def name(self): ...
 
 ### tleaf().value
 
-[Show source in tleaf.py:31](../../rootloader/tleaf.py#L31)
+[Show source in tleaf.py:35](../../rootloader/tleaf.py#L35)
 
 #### Signature
 

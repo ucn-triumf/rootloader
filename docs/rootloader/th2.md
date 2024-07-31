@@ -6,6 +6,7 @@
 
 - [th2](#th2)
   - [th2](#th2-1)
+    - [th2().copy](#th2()copy)
     - [th2().plot](#th2()plot)
     - [th2().to_dataframe](#th2()to_dataframe)
 
@@ -38,12 +39,24 @@ Extract histogram data from ROOT.TH1 data type
 
 ```python
 class th2(object):
-    def __init__(self, hist): ...
+    def __init__(self, hist=None): ...
+```
+
+### th2().copy
+
+[Show source in th2.py:72](../../rootloader/th2.py#L72)
+
+Produce a copy of this object
+
+#### Signature
+
+```python
+def copy(self): ...
 ```
 
 ### th2().plot
 
-[Show source in th2.py:69](../../rootloader/th2.py#L69)
+[Show source in th2.py:82](../../rootloader/th2.py#L82)
 
 Draw the histogram
 
@@ -62,7 +75,7 @@ def plot(self, ax=None, flat=True, **kwargs): ...
 
 ### th2().to_dataframe
 
-[Show source in th2.py:107](../../rootloader/th2.py#L107)
+[Show source in th2.py:120](../../rootloader/th2.py#L120)
 
 Convert tree to pandas dataframe
 
