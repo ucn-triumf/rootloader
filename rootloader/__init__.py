@@ -9,3 +9,7 @@ from .th2 import th2
 from .tleaf import tleaf
 from .tfile import tfile
 from .tdirectory import tdirectory
+import ROOT
+
+# disable grapical output
+ROOT.gROOT.SetBatch(1)
