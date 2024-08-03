@@ -20,6 +20,9 @@ class tfile(tdirectory):
 
         if filename is None: return
 
+        # disable grapical output
+        ROOT.gROOT.SetBatch(1)
+
         # check input
         if not os.path.isfile(filename):
             raise IOError(f'The path "{filename}" does not point to a file')
