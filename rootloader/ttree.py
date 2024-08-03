@@ -28,6 +28,8 @@ class ttree(attrdict):
 
             if tree.index.name not in ('', None):
                 setattr(self, tree.index.name, pd.Series(tree.index))
+                for col in tree.columns:
+                    getattr(self, col).reset_index(inplace=True, drop=True)
 
             return
 
@@ -176,6 +178,8 @@ class ttree(attrdict):
             df = pd.Series(self)
 
         if type(df) is pd.DataFrame:
-            if 'timestamp' in df.columns:
-                df.set_index('timestamp', inplace=True)
+            for col in ('timestamp', 'tUnixTimePrecise'):
+                if col in df.columns:
+                    df.set_index(col, inplace=True)
+                    break
         return df
