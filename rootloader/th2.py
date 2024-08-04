@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 class th2(object):
-    """Extract histogram data from ROOT.TH1 data type
+    """Extract histogram data from ROOT.TH2 data type
 
     Args:
         hist (ROOT.TH2): histogram to import
@@ -33,6 +33,10 @@ class th2(object):
     def __init__(self, hist=None):
 
         if hist is None: return
+
+        if type(hist) is pd.DataFrame:
+            self._from_dataframe(hist)
+            return
 
         self.base_class = hist.Class_Name()
         self.entries = int(hist.GetEntries())
@@ -68,6 +72,25 @@ class th2(object):
 
     def __repr__(self):
         return f'{self.base_class}: "{self.name}", {self.entries} entries, sum = {self.sum}'
+
+    def _from_dataframe(self, df):
+
+        # set metadata
+        for sl in self.__slots__:
+            if sl in df.attrs.keys():
+                setattr(self, sl, df.attrs[sl])
+
+        # set data
+        df.sort_index(inplace=True)
+
+        level = df.index.names.index(self.xlabel)
+        self.x = df.index.get_level_values(level).unique().values
+
+        level = df.index.names.index(self.ylabel)
+        self.y = df.index.get_level_values(level).unique().values
+
+        self.z = df[self.zlabel].values.reshape(self.nbinsy, self.nbinsx)
+        self.dz = df[self.zlabel + " error"].values.reshape(self.nbinsy, self.nbinsx)
 
     def copy(self):
         """Produce a copy of this object"""
@@ -127,7 +150,14 @@ class th2(object):
         idx = pd.MultiIndex.from_arrays((xx.flatten(), yy.flatten()),
                                         names=(self.xlabel, self.ylabel))
         df = pd.DataFrame({self.zlabel: self.z.flatten(),
-                           f'{self.zlabel} err': self.dz.flatten()},
+                           f'{self.zlabel} error': self.dz.flatten()},
                            index=idx)
+
+        # reconvert instructions
+        df.attrs['type'] = th2
+        keys = ('entries', 'name', 'nbinsx', 'nbinsy', 'title', 'xlabel',
+                'ylabel', 'zlabel', 'sum', 'base_class')
+        for key in keys:
+            df.attrs[key] = getattr(self, key)
 
         return df

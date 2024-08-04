@@ -7,11 +7,12 @@
 - [tdirectory](#tdirectory)
   - [tdirectory](#tdirectory-1)
     - [tdirectory().copy](#tdirectory()copy)
+    - [tdirectory().from_dataframe](#tdirectory()from_dataframe)
     - [tdirectory().to_dataframe](#tdirectory()to_dataframe)
 
 ## tdirectory
 
-[Show source in tdirectory.py:13](../../rootloader/tdirectory.py#L13)
+[Show source in tdirectory.py:14](../../rootloader/tdirectory.py#L14)
 
 Contains root file data
 
@@ -30,7 +31,7 @@ class tdirectory(attrdict):
 
 ### tdirectory().copy
 
-[Show source in tdirectory.py:99](../../rootloader/tdirectory.py#L99)
+[Show source in tdirectory.py:100](../../rootloader/tdirectory.py#L100)
 
 Make a copy of this object
 
@@ -40,9 +41,21 @@ Make a copy of this object
 def copy(self): ...
 ```
 
+### tdirectory().from_dataframe
+
+[Show source in tdirectory.py:109](../../rootloader/tdirectory.py#L109)
+
+Convert all elements contained in self to original objects
+
+#### Signature
+
+```python
+def from_dataframe(self): ...
+```
+
 ### tdirectory().to_dataframe
 
-[Show source in tdirectory.py:108](../../rootloader/tdirectory.py#L108)
+[Show source in tdirectory.py:115](../../rootloader/tdirectory.py#L115)
 
 Convert all objects possible (th1 and ttree) into pandas dataframes
 

@@ -44,7 +44,7 @@ class th1(object):
 
 ### th1().copy
 
-[Show source in th1.py:67](../../rootloader/th1.py#L67)
+[Show source in th1.py:84](../../rootloader/th1.py#L84)
 
 Produce a copy of this object
 
@@ -56,7 +56,7 @@ def copy(self): ...
 
 ### th1().plot
 
-[Show source in th1.py:77](../../rootloader/th1.py#L77)
+[Show source in th1.py:94](../../rootloader/th1.py#L94)
 
 Draw the histogram
 
@@ -74,7 +74,7 @@ def plot(self, ax=None, data_only=False, **kwargs): ...
 
 ### th1().to_dataframe
 
-[Show source in th1.py:105](../../rootloader/th1.py#L105)
+[Show source in th1.py:122](../../rootloader/th1.py#L122)
 
 Convert tree to pandas dataframe
 

@@ -39,6 +39,10 @@ class th1(object):
         if hist is None:
             return
 
+        if type(hist) is pd.DataFrame:
+            self._from_dataframe(hist)
+            return
+
         self.base_class = hist.Class_Name()
         self.entries = int(hist.GetEntries())
         self.name = hist.GetName()
@@ -63,6 +67,19 @@ class th1(object):
 
     def __repr__(self):
         return f'{self.base_class}: "{self.name}", {self.entries} entries, sum = {self.sum}'
+
+    def _from_dataframe(self, df):
+        ## convert from datafame to th1
+
+        # set metadata
+        for sl in self.__slots__:
+            if sl in df.attrs.keys():
+                setattr(self, sl, df.attrs[sl])
+
+        # set data
+        self.x = df[self.xlabel].values
+        self.y = df[self.ylabel].values
+        self.dy = df[self.ylabel + " error"].values
 
     def copy(self):
         """Produce a copy of this object"""
@@ -113,4 +130,12 @@ class th1(object):
               self.ylabel: self.y,
               self.ylabel + " error": self.dy,
              }
-        return pd.DataFrame(df)
+        df = pd.DataFrame(df)
+
+        # reconvert instructions
+        df.attrs['type'] = th1
+        keys = ('entries', 'name', 'nbins', 'title', 'xlabel', 'ylabel', 'sum', 'base_class')
+        for key in keys:
+            df.attrs[key] = getattr(self, key)
+
+        return df

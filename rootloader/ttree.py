@@ -23,14 +23,10 @@ class ttree(attrdict):
 
         # extract from dataframe
         if type(tree) is pd.DataFrame:
-            for col in tree.columns:
-                setattr(self, col, pd.Series(tree[col]))
-
-            if tree.index.name not in ('', None):
-                setattr(self, tree.index.name, pd.Series(tree.index))
-                for col in tree.columns:
-                    getattr(self, col).reset_index(inplace=True, drop=True)
-
+            self._from_dataframe(tree)
+            return
+        elif type(tree) is pd.Series:
+            self._from_series(tree)
             return
 
         # extraction of data: fast
@@ -121,6 +117,21 @@ class ttree(attrdict):
 
         return pd.DataFrame(leaves, index=[entry])
 
+    def _from_dataframe(self, tree):
+        # init from dataframe
+        for col in tree.columns:
+            setattr(self, col, pd.Series(tree[col]))
+
+        if tree.index.name not in ('', None):
+            setattr(self, tree.index.name, pd.Series(tree.index))
+            for col in tree.columns:
+                getattr(self, col).reset_index(inplace=True, drop=True)
+
+    def _from_series(self, tree):
+        # init from series
+        for idx in tree.index:
+            setattr(self, idx, tree[idx])
+
     def copy(self):
         """Produce a copy of this object"""
         copy = ttree()
@@ -182,4 +193,8 @@ class ttree(attrdict):
                 if col in df.columns:
                     df.set_index(col, inplace=True)
                     break
+
+        # setup reconvert instructions
+        df.attrs['type'] = ttree
+
         return df

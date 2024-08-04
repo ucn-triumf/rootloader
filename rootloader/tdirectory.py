@@ -9,6 +9,7 @@ from .th2 import th2
 import warnings, os
 import numpy as np
 from tqdm import tqdm
+import pandas as pd
 
 class tdirectory(attrdict):
     """Contains root file data
@@ -104,6 +105,12 @@ class tdirectory(attrdict):
             if hasattr(value, 'copy'):  copy[key] = value.copy()
             else:                       copy[key] = value
         return copy
+
+    def from_dataframe(self):
+        """Convert all elements contained in self to original objects"""
+
+        for key, value in self.items():
+            self[key] = value.attrs['type'](value)
 
     def to_dataframe(self):
         """Convert all objects possible (th1 and ttree) into pandas dataframes"""
