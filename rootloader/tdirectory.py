@@ -110,10 +110,15 @@ class tdirectory(attrdict):
         """Convert all elements contained in self to original objects"""
 
         for key, value in self.items():
-            self[key] = value.attrs['type'](value)
+            try:
+                self[key] = value.attrs['type'](value)
+            except AttributeError as err:
+                print(f'{key} does not have proper attribute to be backconverted')
+            except KeyError as err:
+                print(f'{key} does not know its own type to be backconverted')
 
     def to_dataframe(self):
-        """Convert all objects possible (th1 and ttree) into pandas dataframes"""
+        """Convert all objects possible (th1, th2, and ttree) into pandas dataframes"""
         for k in self.keys():
             try:
                 self[k] = self[k].to_dataframe()
