@@ -55,9 +55,9 @@ def from_dataframe(self): ...
 
 ### tdirectory().to_dataframe
 
-[Show source in tdirectory.py:115](../../rootloader/tdirectory.py#L115)
+[Show source in tdirectory.py:120](../../rootloader/tdirectory.py#L120)
 
-Convert all objects possible (th1 and ttree) into pandas dataframes
+Convert all objects possible (th1, th2, and ttree) into pandas dataframes
 
 #### Signature
 

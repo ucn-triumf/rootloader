@@ -29,6 +29,15 @@ class ttree(attrdict):
             self._from_series(tree)
             return
 
+        # if ttree input, then copy
+        elif type(tree) is ttree:
+            for key, value in tree.items():
+                if hasattr(value, 'copy'):
+                    self[key] = value.copy()
+                else:
+                    self[key] = value
+            return
+
         # extraction of data: fast
         try:
             data = self._extract_event_fast(tree)
