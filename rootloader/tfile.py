@@ -14,9 +14,14 @@ class tfile(tdirectory):
         as_dataframe (bool): if true, run to_dataframe upon read
         empty_ok (bool): if true, don't save empty objects
         quiet (bool): if true, don't print skipped statement if object empty
+        key_filter (function handle): a function with the following signature:
+                bool fn(str) -- takes as input a string and returns a bool
+                indicating whether the object with the corresponding key should
+                be read
     """
 
-    def __init__(self, filename, as_dataframe=False, empty_ok=True, quiet=True):
+    def __init__(self, filename, as_dataframe=False, empty_ok=True, quiet=True,
+                 key_filter=None):
 
         if filename is None: return
 
@@ -28,7 +33,10 @@ class tfile(tdirectory):
         fid = ROOT.TFile(filename, 'READ')
 
         # get contents
-        super().__init__(fid, empty_ok=empty_ok, quiet=quiet)
+        super().__init__(fid,
+                         empty_ok=empty_ok,
+                         quiet=quiet,
+                         key_filter=key_filter)
 
         # close the file
         fid.Close()

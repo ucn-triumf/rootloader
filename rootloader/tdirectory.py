@@ -18,25 +18,33 @@ class tdirectory(attrdict):
             directory (ROOT.TDirectoryFile|ROOT.TFile): object to parse
             empty_ok (bool): if true, save empty objects
             quiet (bool): if true, don't print skipped statement if object empty
+            key_filter (function handle): a function with the following signature:
+                bool fn(str) -- takes as input a string and returns a bool
+                indicating whether the object with the corresponding key should
+                be read
     """
 
-    def __init__(self, directory, empty_ok=True, quiet=True):
+    def __init__(self, directory, empty_ok=True, quiet=True, key_filter=None):
 
         if directory is None: return
+        if key_filter is None: key_filter = lambda x: True
 
         # get keys and read only those with highest cycle number
         keys = {}
         for key in directory.GetListOfKeys():
             name = key.GetName()
 
-            # keep key if not yet in dict
-            if name not in keys.keys():
-                keys[name] = key
-            else:
+            # filter
+            if key_filter(name):
 
-                # keep key with largest cycle number
-                if key.GetCycle() > keys[name].GetCycle():
+                # keep key if not yet in dict
+                if name not in keys.keys():
                     keys[name] = key
+                else:
+
+                    # keep key with largest cycle number
+                    if key.GetCycle() > keys[name].GetCycle():
+                        keys[name] = key
 
         # read trees and histograms from data file
         for name, key in tqdm(keys.items(), desc=f'Loading {directory.GetName()}', leave=False):
