@@ -67,6 +67,9 @@ class ttree(attrdict):
     def __dir__(self):
         return sorted(self.keys())
 
+    def __len__(self):
+        return self.entries
+
     def __repr__(self):
         klist = list(self.keys())
         if klist:

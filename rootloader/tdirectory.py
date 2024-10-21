@@ -47,7 +47,8 @@ class tdirectory(attrdict):
                         keys[name] = key
 
         # read trees and histograms from data file
-        for name, key in tqdm(keys.items(), desc=f'Loading {directory.GetName()}', leave=False):
+        for name, key in tqdm(keys.items(), desc=f'Loading {directory.GetName()}',
+                              leave=False, total=len(keys)):
             obj = directory.Get(name)
             classname = obj.ClassName()
 
@@ -83,6 +84,9 @@ class tdirectory(attrdict):
         klist = list(self.keys())
         if klist:
             klist.sort()
+
+            # drop hidden variables
+            klist = [k for k in klist if k[0] != '_']
 
             # get number of columns based on terminal size
             maxsize = max((len(k) for k in klist)) + 2
@@ -128,7 +132,8 @@ class tdirectory(attrdict):
     def to_dataframe(self):
         """Convert all objects possible (th1, th2, and ttree) into pandas dataframes"""
         for k in self.keys():
-            try:
-                self[k] = self[k].to_dataframe()
-            except AttributeError:
-                pass
+            if type(self[k]) is not pd.DataFrame:
+                try:
+                    self[k] = self[k].to_dataframe()
+                except AttributeError:
+                    pass
