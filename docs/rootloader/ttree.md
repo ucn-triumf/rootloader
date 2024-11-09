@@ -6,11 +6,11 @@
 
 - [ttree](#ttree)
   - [ttree](#ttree-1)
-    - [ttree().copy](#ttree()copy)
-    - [ttree().entries](#ttree()entries)
-    - [ttree().get_subtree](#ttree()get_subtree)
-    - [ttree().plot](#ttree()plot)
-    - [ttree().to_dataframe](#ttree()to_dataframe)
+    - [ttree.copy](#ttreecopy)
+    - [ttree.entries](#ttreeentries)
+    - [ttree.get_subtree](#ttreeget_subtree)
+    - [ttree.plot](#ttreeplot)
+    - [ttree.to_dataframe](#ttreeto_dataframe)
 
 ## ttree
 
@@ -31,7 +31,7 @@ class ttree(attrdict):
     def __init__(self, tree=None, filter_str=None, columns=None): ...
 ```
 
-### ttree().copy
+### ttree.copy
 
 [Show source in ttree.py:162](../../rootloader/ttree.py#L162)
 
@@ -43,7 +43,7 @@ Produce a copy of this object
 def copy(self): ...
 ```
 
-### ttree().entries
+### ttree.entries
 
 [Show source in ttree.py:173](../../rootloader/ttree.py#L173)
 
@@ -54,7 +54,7 @@ def copy(self): ...
 def entries(self): ...
 ```
 
-### ttree().get_subtree
+### ttree.get_subtree
 
 [Show source in ttree.py:176](../../rootloader/ttree.py#L176)
 
@@ -62,7 +62,7 @@ Return a copy of self but only for a subset of entries
 
 #### Arguments
 
-- [ttree().entries](#ttreeentries) *list|np.array* - list of entries to get from tree
+- [ttree.entries](#ttreeentries) *list|np.array* - list of entries to get from tree
 
 #### Returns
 
@@ -74,7 +74,7 @@ Return a copy of self but only for a subset of entries
 def get_subtree(self, entries): ...
 ```
 
-### ttree().plot
+### ttree.plot
 
 [Show source in ttree.py:198](../../rootloader/ttree.py#L198)
 
@@ -90,7 +90,7 @@ same as pandas.DataFrame.plot
 def plot(self, *args, **kwargs): ...
 ```
 
-### ttree().to_dataframe
+### ttree.to_dataframe
 
 [Show source in ttree.py:206](../../rootloader/ttree.py#L206)
 

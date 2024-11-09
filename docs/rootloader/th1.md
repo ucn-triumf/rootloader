@@ -6,9 +6,9 @@
 
 - [th1](#th1)
   - [th1](#th1-1)
-    - [th1().copy](#th1()copy)
-    - [th1().plot](#th1()plot)
-    - [th1().to_dataframe](#th1()to_dataframe)
+    - [th1.copy](#th1copy)
+    - [th1.plot](#th1plot)
+    - [th1.to_dataframe](#th1to_dataframe)
 
 ## th1
 
@@ -42,7 +42,7 @@ class th1(object):
     def __init__(self, hist=None): ...
 ```
 
-### th1().copy
+### th1.copy
 
 [Show source in th1.py:84](../../rootloader/th1.py#L84)
 
@@ -54,7 +54,7 @@ Produce a copy of this object
 def copy(self): ...
 ```
 
-### th1().plot
+### th1.plot
 
 [Show source in th1.py:94](../../rootloader/th1.py#L94)
 
@@ -72,7 +72,7 @@ Draw the histogram
 def plot(self, ax=None, data_only=False, **kwargs): ...
 ```
 
-### th1().to_dataframe
+### th1.to_dataframe
 
 [Show source in th1.py:122](../../rootloader/th1.py#L122)
 

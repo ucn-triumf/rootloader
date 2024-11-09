@@ -6,9 +6,9 @@
 
 - [tdirectory](#tdirectory)
   - [tdirectory](#tdirectory-1)
-    - [tdirectory().copy](#tdirectory()copy)
-    - [tdirectory().from_dataframe](#tdirectory()from_dataframe)
-    - [tdirectory().to_dataframe](#tdirectory()to_dataframe)
+    - [tdirectory.copy](#tdirectorycopy)
+    - [tdirectory.from_dataframe](#tdirectoryfrom_dataframe)
+    - [tdirectory.to_dataframe](#tdirectoryto_dataframe)
 
 ## tdirectory
 
@@ -39,7 +39,7 @@ class tdirectory(attrdict):
     ): ...
 ```
 
-### tdirectory().copy
+### tdirectory.copy
 
 [Show source in tdirectory.py:121](../../rootloader/tdirectory.py#L121)
 
@@ -51,7 +51,7 @@ Make a copy of this object
 def copy(self): ...
 ```
 
-### tdirectory().from_dataframe
+### tdirectory.from_dataframe
 
 [Show source in tdirectory.py:130](../../rootloader/tdirectory.py#L130)
 
@@ -63,7 +63,7 @@ Convert all elements contained in self to original objects
 def from_dataframe(self): ...
 ```
 
-### tdirectory().to_dataframe
+### tdirectory.to_dataframe
 
 [Show source in tdirectory.py:141](../../rootloader/tdirectory.py#L141)
 

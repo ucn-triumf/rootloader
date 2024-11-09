@@ -6,7 +6,7 @@
 
 - [attrdict](#attrdict)
   - [attrdict](#attrdict-1)
-    - [attrdict().copy](#attrdict()copy)
+    - [attrdict.copy](#attrdictcopy)
 
 ## attrdict
 
@@ -20,7 +20,7 @@ Provides common functions for dictionaries of data containers
 class attrdict(dict): ...
 ```
 
-### attrdict().copy
+### attrdict.copy
 
 [Show source in attrdict.py:38](../../rootloader/attrdict.py#L38)
 

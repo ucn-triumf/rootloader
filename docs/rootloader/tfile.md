@@ -6,7 +6,7 @@
 
 - [tfile](#tfile)
   - [tfile](#tfile-1)
-    - [tfile().copy](#tfile()copy)
+    - [tfile.copy](#tfilecopy)
 
 ## tfile
 
@@ -44,7 +44,7 @@ class tfile(tdirectory):
     ): ...
 ```
 
-### tfile().copy
+### tfile.copy
 
 [Show source in tfile.py:54](../../rootloader/tfile.py#L54)
 

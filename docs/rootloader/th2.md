@@ -6,9 +6,9 @@
 
 - [th2](#th2)
   - [th2](#th2-1)
-    - [th2().copy](#th2()copy)
-    - [th2().plot](#th2()plot)
-    - [th2().to_dataframe](#th2()to_dataframe)
+    - [th2.copy](#th2copy)
+    - [th2.plot](#th2plot)
+    - [th2.to_dataframe](#th2to_dataframe)
 
 ## th2
 
@@ -42,7 +42,7 @@ class th2(object):
     def __init__(self, hist=None): ...
 ```
 
-### th2().copy
+### th2.copy
 
 [Show source in th2.py:95](../../rootloader/th2.py#L95)
 
@@ -54,7 +54,7 @@ Produce a copy of this object
 def copy(self): ...
 ```
 
-### th2().plot
+### th2.plot
 
 [Show source in th2.py:105](../../rootloader/th2.py#L105)
 
@@ -73,7 +73,7 @@ Draw the histogram
 def plot(self, ax=None, flat=True, **kwargs): ...
 ```
 
-### th2().to_dataframe
+### th2.to_dataframe
 
 [Show source in th2.py:143](../../rootloader/th2.py#L143)
 

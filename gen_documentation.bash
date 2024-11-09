@@ -10,7 +10,7 @@
 handsdown -o docs --theme readthedocs
 
 # fix the broken links
-cd docs
+cd docs/rootloader
 for file in *;
 do
     if [ -f "$file" ];  then
