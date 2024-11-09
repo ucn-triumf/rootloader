@@ -39,17 +39,17 @@ class tdirectory(attrdict):
 
                 # keep key if not yet in dict
                 if name not in keys.keys():
-                    keys[name] = key
+                    keys[name] = (name, key.GetCycle())
                 else:
 
                     # keep key with largest cycle number
-                    if key.GetCycle() > keys[name].GetCycle():
-                        keys[name] = key
+                    if key.GetCycle() > keys[name][1]:
+                        keys[name] = (name, key.GetCycle())
 
         # read trees and histograms from data file
-        for name, key in tqdm(keys.items(), desc=f'Loading {directory.GetName()}',
+        for name, cycle in tqdm(keys.values(), desc=f'Loading {directory.GetName()}',
                               leave=False, total=len(keys)):
-            obj = directory.Get(name)
+            obj = directory.Get(f'{name};{cycle}')
             classname = obj.ClassName()
 
             # TTree
