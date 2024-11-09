@@ -18,10 +18,14 @@ class tfile(tdirectory):
                 bool fn(str) -- takes as input a string and returns a bool
                 indicating whether the object with the corresponding key should
                 be read
+        tree_filter (dict): {treename: (filter_string, [columns])}
+            treename (str): name of the tree to apply elements to
+            filter_string (str|None): if not none then pass this to [`RDataFrame.Filter`](https://root.cern/doc/master/classROOT_1_1RDF_1_1RInterface.html#ad6a94ba7e70fc8f6425a40a4057d40a0)
+            [columns] (list|None): list of column names to include in fetch, if None, get all
     """
 
     def __init__(self, filename, as_dataframe=False, empty_ok=True, quiet=True,
-                 key_filter=None):
+                 key_filter=None, tree_filter=None):
 
         if filename is None: return
 
@@ -36,7 +40,9 @@ class tfile(tdirectory):
         super().__init__(fid,
                          empty_ok=empty_ok,
                          quiet=quiet,
-                         key_filter=key_filter)
+                         key_filter=key_filter,
+                         tree_filter=tree_filter,
+                         )
 
         # close the file
         fid.Close()

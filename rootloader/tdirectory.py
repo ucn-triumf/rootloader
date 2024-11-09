@@ -15,19 +15,28 @@ class tdirectory(attrdict):
     """Contains root file data
 
     Args:
-            directory (ROOT.TDirectoryFile|ROOT.TFile): object to parse
-            empty_ok (bool): if true, save empty objects
-            quiet (bool): if true, don't print skipped statement if object empty
-            key_filter (function handle): a function with the following signature:
-                bool fn(str) -- takes as input a string and returns a bool
-                indicating whether the object with the corresponding key should
-                be read
+        directory (ROOT.TDirectoryFile|ROOT.TFile): object to parse
+        empty_ok (bool): if true, save empty objects
+        quiet (bool): if true, don't print skipped statement if object empty
+        key_filter (function handle): a function with the following signature:
+            bool fn(str) -- takes as input a string and returns a bool
+            indicating whether the object with the corresponding key should
+            be read
+        tree_filter (dict): {treename: (filter_string, [columns])}
+            treename (str): name of the tree to apply elements to
+            filter_string (str|None): if not none then pass this to [`RDataFrame.Filter`](https://root.cern/doc/master/classROOT_1_1RDF_1_1RInterface.html#ad6a94ba7e70fc8f6425a40a4057d40a0)
+            [columns] (list|None): list of column names to include in fetch, if None, get all
     """
 
-    def __init__(self, directory, empty_ok=True, quiet=True, key_filter=None):
+    def __init__(self, directory, empty_ok=True, quiet=True, key_filter=None,
+                 tree_filter=None):
 
+        # copy
         if directory is None: return
+
+        # defaults
         if key_filter is None: key_filter = lambda x: True
+        tree_filter = {} if tree_filter is None else tree_filter
 
         # get keys and read only those with highest cycle number
         keys = {}
@@ -55,7 +64,7 @@ class tdirectory(attrdict):
             # TTree
             if 'TTree' == classname:
                 if empty_ok or obj.GetEntries() > 0:
-                    self[name] = ttree(obj)
+                    self[name] = ttree(obj, *tree_filter.get(name, (None, None)))
                 elif not quiet:
                     tqdm.write(f'Skipped "{name}" due to lack of entries')
 

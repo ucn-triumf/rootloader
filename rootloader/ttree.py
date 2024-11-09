@@ -14,12 +14,18 @@ class ttree(attrdict):
 
     Args:
         tree (ROOT.TTree|pd.DataFrame): tree to load
+        filter_string (str|None): if not none then pass this to [`RDataFrame.Filter`](https://root.cern/doc/master/classROOT_1_1RDF_1_1RInterface.html#ad6a94ba7e70fc8f6425a40a4057d40a0)
+        columns (list|None): list of column names to include in fetch, if None, get all
     """
 
-    def __init__(self, tree=None):
+    def __init__(self, tree=None, filter_str=None, columns=None):
 
         if tree is None:
             return
+
+        # check input
+        if isinstance(columns, str):
+            columns = [columns]
 
         # extract from dataframe
         if type(tree) is pd.DataFrame:
@@ -40,12 +46,15 @@ class ttree(attrdict):
 
         # extraction of data: fast
         try:
-            data = self._extract_event_fast(tree)
+            if filter_str is None:
+                data = self._extract_event_fast(tree, columns)
+            else:
+                data = self._extract_event_fast_filtered(tree, filter_str, columns)
 
         # if there is a problem, revert to slower, but more robust version
         except Exception:
 
-            tqdm.write("Reverting to robust ttree reader")
+            tqdm.write(f"{tree.GetName()}: Reverting to robust ttree reader")
             entries = tree.GetEntries()
             if entries == 0: return
 
@@ -96,9 +105,15 @@ class ttree(attrdict):
         else:
             return self.__class__.__name__ + "()"
 
-    def _extract_event_fast(self, tree):
+    def _extract_event_fast(self, tree, columns):
         # fast version of getting events using RDataFrame
-        data = ROOT.RDataFrame(tree).AsNumpy()
+        data = ROOT.RDataFrame(tree).AsNumpy(columns=columns)
+        for key, value in data.items():
+            setattr(self, key, pd.Series(value))
+
+    def _extract_event_fast_filtered(self, tree, filter_str, columns):
+        # fast version of getting events using RDataFrame
+        data = ROOT.RDataFrame(tree).Filter(filter_str).AsNumpy(columns=columns)
         for key, value in data.items():
             setattr(self, key, pd.Series(value))
 
