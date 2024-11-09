@@ -24,19 +24,29 @@ key_filter (function handle): a function with the following signature:
         bool fn(str) -- takes as input a string and returns a bool
         indicating whether the object with the corresponding key should
         be read
+- `tree_filter` *dict* - {treename: (filter_string, [columns])}
+    - `treename` *str* - name of the tree to apply elements to
+    - `filter_string` *str|None* - if not none then pass this to [`RDataFrame.Filter`](https://root.cern/doc/master/classROOT_1_1RDF_1_1RInterface.html#ad6a94ba7e70fc8f6425a40a4057d40a0)
+    - `[columns]` *list|None* - list of column names to include in fetch, if None, get all
 
 #### Signature
 
 ```python
 class tfile(tdirectory):
     def __init__(
-        self, filename, as_dataframe=False, empty_ok=True, quiet=True, key_filter=None
+        self,
+        filename,
+        as_dataframe=False,
+        empty_ok=True,
+        quiet=True,
+        key_filter=None,
+        tree_filter=None,
     ): ...
 ```
 
 ### tfile().copy
 
-[Show source in tfile.py:48](../../rootloader/tfile.py#L48)
+[Show source in tfile.py:54](../../rootloader/tfile.py#L54)
 
 Make a copy of this object
 

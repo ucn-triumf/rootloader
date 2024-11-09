@@ -25,17 +25,23 @@ key_filter (function handle): a function with the following signature:
     bool fn(str) -- takes as input a string and returns a bool
     indicating whether the object with the corresponding key should
     be read
+- `tree_filter` *dict* - {treename: (filter_string, [columns])}
+    - `treename` *str* - name of the tree to apply elements to
+    - `filter_string` *str|None* - if not none then pass this to [`RDataFrame.Filter`](https://root.cern/doc/master/classROOT_1_1RDF_1_1RInterface.html#ad6a94ba7e70fc8f6425a40a4057d40a0)
+    - `[columns]` *list|None* - list of column names to include in fetch, if None, get all
 
 #### Signature
 
 ```python
 class tdirectory(attrdict):
-    def __init__(self, directory, empty_ok=True, quiet=True, key_filter=None): ...
+    def __init__(
+        self, directory, empty_ok=True, quiet=True, key_filter=None, tree_filter=None
+    ): ...
 ```
 
 ### tdirectory().copy
 
-[Show source in tdirectory.py:108](../../rootloader/tdirectory.py#L108)
+[Show source in tdirectory.py:121](../../rootloader/tdirectory.py#L121)
 
 Make a copy of this object
 
@@ -47,7 +53,7 @@ def copy(self): ...
 
 ### tdirectory().from_dataframe
 
-[Show source in tdirectory.py:117](../../rootloader/tdirectory.py#L117)
+[Show source in tdirectory.py:130](../../rootloader/tdirectory.py#L130)
 
 Convert all elements contained in self to original objects
 
@@ -59,7 +65,7 @@ def from_dataframe(self): ...
 
 ### tdirectory().to_dataframe
 
-[Show source in tdirectory.py:128](../../rootloader/tdirectory.py#L128)
+[Show source in tdirectory.py:141](../../rootloader/tdirectory.py#L141)
 
 Convert all objects possible (th1, th2, and ttree) into pandas dataframes
 

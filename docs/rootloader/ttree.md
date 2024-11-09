@@ -21,17 +21,19 @@ Extract ROOT.TTree fully into memory
 #### Arguments
 
 - `tree` *ROOT.TTree|pd.DataFrame* - tree to load
+- `filter_string` *str|None* - if not none then pass this to [`RDataFrame.Filter`](https://root.cern/doc/master/classROOT_1_1RDF_1_1RInterface.html#ad6a94ba7e70fc8f6425a40a4057d40a0)
+- `columns` *list|None* - list of column names to include in fetch, if None, get all
 
 #### Signature
 
 ```python
 class ttree(attrdict):
-    def __init__(self, tree=None): ...
+    def __init__(self, tree=None, filter_str=None, columns=None): ...
 ```
 
 ### ttree().copy
 
-[Show source in ttree.py:144](../../rootloader/ttree.py#L144)
+[Show source in ttree.py:162](../../rootloader/ttree.py#L162)
 
 Produce a copy of this object
 
@@ -43,7 +45,7 @@ def copy(self): ...
 
 ### ttree().entries
 
-[Show source in ttree.py:155](../../rootloader/ttree.py#L155)
+[Show source in ttree.py:173](../../rootloader/ttree.py#L173)
 
 #### Signature
 
@@ -54,7 +56,7 @@ def entries(self): ...
 
 ### ttree().get_subtree
 
-[Show source in ttree.py:158](../../rootloader/ttree.py#L158)
+[Show source in ttree.py:176](../../rootloader/ttree.py#L176)
 
 Return a copy of self but only for a subset of entries
 
@@ -74,7 +76,7 @@ def get_subtree(self, entries): ...
 
 ### ttree().plot
 
-[Show source in ttree.py:180](../../rootloader/ttree.py#L180)
+[Show source in ttree.py:198](../../rootloader/ttree.py#L198)
 
 Convert to dataframe and plot. Arguments passed to [pandas.DataFrame.plot](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.plot.html)
 
@@ -90,7 +92,7 @@ def plot(self, *args, **kwargs): ...
 
 ### ttree().to_dataframe
 
-[Show source in ttree.py:188](../../rootloader/ttree.py#L188)
+[Show source in ttree.py:206](../../rootloader/ttree.py#L206)
 
 Convert tree to pandas dataframe
 
