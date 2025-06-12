@@ -67,6 +67,9 @@ class th2(object):
         self.z = self.z.reshape(self.nbinsx, self.nbinsy)
         self.dz = self.dz.reshape(self.nbinsx, self.nbinsy)
 
+        self.z = self.z.transpose()
+        self.dz = self.dz.transpose()
+
     def __len__(self):
         return self.nbins
 
@@ -89,8 +92,8 @@ class th2(object):
         level = df.index.names.index(self.ylabel)
         self.y = df.index.get_level_values(level).unique().values
 
-        self.z = df[self.zlabel].values.reshape(self.nbinsy, self.nbinsx)
-        self.dz = df[self.zlabel + " error"].values.reshape(self.nbinsy, self.nbinsx)
+        self.z = df[self.zlabel].values.reshape(self.nbinsx, self.nbinsy)
+        self.dz = df[self.zlabel + " error"].values.reshape(self.nbinsx, self.nbinsy)
 
     def copy(self):
         """Produce a copy of this object"""
@@ -117,7 +120,8 @@ class th2(object):
         # draw flat
         if flat:
             if ax is None:
-                ax = plt.gcf().add_subplot()
+                plt.figure()
+                ax = plt.gca()
 
             # defaults
             if 'cmap' not in kwargs.keys(): kwargs['cmap'] = 'RdBu'
@@ -133,7 +137,8 @@ class th2(object):
         else:
 
             if ax is None:
-                ax = plt.gcf().add_subplot(projection='3d')
+                plt.figure()
+                ax = plt.gca().add_subplot(projection='3d')
 
             ax.plot_surface(xx, yy, self.z, **kwargs)
             ax.set_xlabel(self.xlabel)
@@ -149,8 +154,8 @@ class th2(object):
         xx, yy = np.meshgrid(self.x, self.y)
         idx = pd.MultiIndex.from_arrays((xx.flatten(), yy.flatten()),
                                         names=(self.xlabel, self.ylabel))
-        df = pd.DataFrame({self.zlabel: self.z.flatten(),
-                           f'{self.zlabel} error': self.dz.flatten()},
+        df = pd.DataFrame({self.zlabel: self.z.transpose().flatten(),
+                           f'{self.zlabel} error': self.dz.transpose().flatten()},
                            index=idx)
 
         # reconvert instructions
