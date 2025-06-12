@@ -129,9 +129,14 @@ class th2(object):
             c = ax.pcolormesh(xx, yy, self.z, **kwargs)
             ax.axis([self.x.min(), self.x.max(), self.y.min(), self.y.max()])
             plt.gcf().colorbar(c, ax=ax)
-            ax.set_xlabel(self.xlabel)
-            ax.set_ylabel(self.ylabel)
-            ax.set_title(self.title)
+
+            if len(self.xlabel) > 15:   ax.set_xlabel(self.xlabel, fontsize='x-small')
+            else:                       ax.set_xlabel(self.xlabel)
+
+            if len(self.ylabel) > 15:   ax.set_ylabel(self.ylabel, fontsize='x-small')
+            else:                       ax.set_ylabel(self.ylabel)
+
+            ax.set_title(self.title, fontsize='x-small')
 
         # draw 3d
         else:
@@ -141,9 +146,15 @@ class th2(object):
                 ax = plt.gca().add_subplot(projection='3d')
 
             ax.plot_surface(xx, yy, self.z, **kwargs)
-            ax.set_xlabel(self.xlabel)
-            ax.set_ylabel(self.ylabel)
-            ax.set_zlabel(self.zlabel)
+
+            if len(self.xlabel) > 15:   ax.set_xlabel(self.xlabel, fontsize='x-small')
+            else:                       ax.set_xlabel(self.xlabel)
+
+            if len(self.ylabel) > 15:   ax.set_ylabel(self.ylabel, fontsize='x-small')
+            else:                       ax.set_ylabel(self.ylabel)
+
+            if len(self.zlabel) > 15:   ax.set_zlabel(self.zlabel, fontsize='x-small')
+            else:                       ax.set_zlabel(self.zlabel)
 
     def to_dataframe(self):
         """Convert tree to pandas dataframe
@@ -164,5 +175,8 @@ class th2(object):
                 'ylabel', 'zlabel', 'sum', 'base_class')
         for key in keys:
             df.attrs[key] = getattr(self, key)
+
+        # special draw function
+        df.draw = lambda ax=None, flat=True, **kwargs: th2(df).plot(ax, flat, **kwargs)
 
         return df

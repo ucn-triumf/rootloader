@@ -114,8 +114,13 @@ class th1(object):
 
         # plot elements
         if not data_only:
-            ax.set_xlabel(self.xlabel)
-            ax.set_ylabel(self.ylabel)
+
+            if len(self.xlabel) > 15:   ax.set_xlabel(self.xlabel, fontsize='x-small')
+            else:                       ax.set_xlabel(self.xlabel)
+
+            if len(self.ylabel) > 15:   ax.set_ylabel(self.ylabel, fontsize='x-small')
+            else:                       ax.set_ylabel(self.ylabel)
+
             ax.set_title(self.title, fontsize='x-small')
             plt.tight_layout()
 
@@ -137,5 +142,8 @@ class th1(object):
         keys = ('entries', 'name', 'nbins', 'title', 'xlabel', 'ylabel', 'sum', 'base_class')
         for key in keys:
             df.attrs[key] = getattr(self, key)
+
+        # special draw function
+        df.draw = lambda ax=None, data_only=False, **kwargs: th1(df).plot(ax, data_only, **kwargs)
 
         return df
