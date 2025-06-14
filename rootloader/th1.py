@@ -34,15 +34,23 @@ class th1(object):
                      'capsize': 0,
                      }
 
-    def __init__(self, hist):
+    def __init__(self, hist=None):
+
+        if hist is None:
+            return
+
+        if type(hist) is pd.DataFrame:
+            self._from_dataframe(hist)
+            return
+
         self.base_class = hist.Class_Name()
         self.entries = int(hist.GetEntries())
         self.name = hist.GetName()
         self.sum = hist.GetSum()
         self.nbins = int(hist.GetNbinsX())
         self.title = hist.GetTitle()
-        self.xlabel = hist.GetXaxis().GetName()
-        self.ylabel = hist.GetYaxis().GetName()
+        self.xlabel = hist.GetXaxis().GetTitle()
+        self.ylabel = hist.GetYaxis().GetTitle()
 
         self.x = np.fromiter(map(hist.GetBinCenter, range(self.nbins)),
                              dtype=float,
@@ -60,11 +68,35 @@ class th1(object):
     def __repr__(self):
         return f'{self.base_class}: "{self.name}", {self.entries} entries, sum = {self.sum}'
 
-    def plot(self, ax=None, **kwargs):
+    def _from_dataframe(self, df):
+        ## convert from datafame to th1
+
+        # set metadata
+        for sl in self.__slots__:
+            if sl in df.attrs.keys():
+                setattr(self, sl, df.attrs[sl])
+
+        # set data
+        self.x = df[self.xlabel].values
+        self.y = df[self.ylabel].values
+        self.dy = df[self.ylabel + " error"].values
+
+    def copy(self):
+        """Produce a copy of this object"""
+        copy = th1()
+        for sl in self.__slots__:
+            val = getattr(self, sl)
+            if hasattr(val, 'copy'):    setattr(copy, sl, val.copy())
+            else:                       setattr(copy, sl, val)
+
+        return copy
+
+    def plot(self, ax=None, data_only=False, **kwargs):
         """Draw the histogram
 
         Args:
             ax (plt.Axes): if None, draw in current axes, else draw on ax
+            data_only (bool): if true don't set axis labels, title
             kwargs: passed to matplotlib.pyplot.errorbar
         """
 
@@ -80,6 +112,18 @@ class th1(object):
         # draw
         ax.errorbar(self.x, self.y, self.dy, **kwargs)
 
+        # plot elements
+        if not data_only:
+
+            if len(self.xlabel) > 15:   ax.set_xlabel(self.xlabel, fontsize='x-small')
+            else:                       ax.set_xlabel(self.xlabel)
+
+            if len(self.ylabel) > 15:   ax.set_ylabel(self.ylabel, fontsize='x-small')
+            else:                       ax.set_ylabel(self.ylabel)
+
+            ax.set_title(self.title, fontsize='x-small')
+            plt.tight_layout()
+
     def to_dataframe(self):
         """Convert tree to pandas dataframe
 
@@ -91,4 +135,15 @@ class th1(object):
               self.ylabel: self.y,
               self.ylabel + " error": self.dy,
              }
-        return pd.DataFrame(df)
+        df = pd.DataFrame(df)
+
+        # reconvert instructions
+        df.attrs['type'] = th1
+        keys = ('entries', 'name', 'nbins', 'title', 'xlabel', 'ylabel', 'sum', 'base_class')
+        for key in keys:
+            df.attrs[key] = getattr(self, key)
+
+        # special draw function
+        df.draw = lambda ax=None, data_only=False, **kwargs: th1(df).plot(ax, data_only, **kwargs)
+
+        return df

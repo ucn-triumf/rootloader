@@ -6,8 +6,9 @@
 
 - [th1](#th1)
   - [th1](#th1-1)
-    - [th1().plot](#th1()plot)
-    - [th1().to_dataframe](#th1()to_dataframe)
+    - [th1.copy](#th1copy)
+    - [th1.plot](#th1plot)
+    - [th1.to_dataframe](#th1to_dataframe)
 
 ## th1
 
@@ -38,29 +39,42 @@ Extract histogram data from ROOT.TH1 data type
 
 ```python
 class th1(object):
-    def __init__(self, hist): ...
+    def __init__(self, hist=None): ...
 ```
 
-### th1().plot
+### th1.copy
 
-[Show source in th1.py:63](../../rootloader/th1.py#L63)
+[Show source in th1.py:84](../../rootloader/th1.py#L84)
+
+Produce a copy of this object
+
+#### Signature
+
+```python
+def copy(self): ...
+```
+
+### th1.plot
+
+[Show source in th1.py:94](../../rootloader/th1.py#L94)
 
 Draw the histogram
 
 #### Arguments
 
 - `ax` *plt.Axes* - if None, draw in current axes, else draw on ax
+- `data_only` *bool* - if true don't set axis labels, title
 - `kwargs` - passed to matplotlib.pyplot.errorbar
 
 #### Signature
 
 ```python
-def plot(self, ax=None, **kwargs): ...
+def plot(self, ax=None, data_only=False, **kwargs): ...
 ```
 
-### th1().to_dataframe
+### th1.to_dataframe
 
-[Show source in th1.py:83](../../rootloader/th1.py#L83)
+[Show source in th1.py:122](../../rootloader/th1.py#L122)
 
 Convert tree to pandas dataframe
 

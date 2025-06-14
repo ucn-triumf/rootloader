@@ -14,22 +14,48 @@ class ttree(attrdict):
     """Extract ROOT.TTree fully into memory
 
     Args:
-        tree (ROOT.TTree): tree to load
+        tree (ROOT.TTree|pd.DataFrame): tree to load
+        filter_string (str|None): if not none then pass this to [`RDataFrame.Filter`](https://root.cern/doc/master/classROOT_1_1RDF_1_1RInterface.html#ad6a94ba7e70fc8f6425a40a4057d40a0)
+        columns (list|None): list of column names to include in fetch, if None, get all
     """
 
-    def __init__(self, tree):
+    def __init__(self, tree=None, filter_str=None, columns=None):
 
         if tree is None:
             return
 
+        # check input
+        if isinstance(columns, str):
+            columns = [columns]
+
+        # extract from dataframe
+        if type(tree) is pd.DataFrame:
+            self._from_dataframe(tree)
+            return
+        elif type(tree) is pd.Series:
+            self._from_series(tree)
+            return
+
+        # if ttree input, then copy
+        elif type(tree) is ttree:
+            for key, value in tree.items():
+                if hasattr(value, 'copy'):
+                    self[key] = value.copy()
+                else:
+                    self[key] = value
+            return
+
         # extraction of data: fast
         try:
-            data = self._extract_event_fast(tree)
+            if filter_str is None:
+                data = self._extract_event_fast(tree, columns)
+            else:
+                data = self._extract_event_fast_filtered(tree, filter_str, columns)
 
         # if there is a problem, revert to slower, but more robust version
         except Exception:
 
-            tqdm.write("Reverting to robust ttree reader")
+            tqdm.write(f"{tree.GetName()}: Reverting to robust ttree reader")
             entries = tree.GetEntries()
             if entries == 0: return
 
@@ -50,6 +76,9 @@ class ttree(attrdict):
 
     def __dir__(self):
         return sorted(self.keys())
+
+    def __len__(self):
+        return self.entries
 
     def __repr__(self):
         klist = list(self.keys())
@@ -77,9 +106,15 @@ class ttree(attrdict):
         else:
             return self.__class__.__name__ + "()"
 
-    def _extract_event_fast(self, tree):
+    def _extract_event_fast(self, tree, columns):
         # fast version of getting events using RDataFrame
-        data = ROOT.RDataFrame(tree).AsNumpy()
+        data = ROOT.RDataFrame(tree).AsNumpy(columns=columns)
+        for key, value in data.items():
+            setattr(self, key, pd.Series(value))
+
+    def _extract_event_fast_filtered(self, tree, filter_str, columns):
+        # fast version of getting events using RDataFrame
+        data = ROOT.RDataFrame(tree).Filter(filter_str).AsNumpy(columns=columns)
         for key, value in data.items():
             setattr(self, key, pd.Series(value))
 
@@ -109,6 +144,35 @@ class ttree(attrdict):
                                         dtype = leaftype)]
 
         return pd.DataFrame(leaves, index=[entry])
+
+    def _from_dataframe(self, tree):
+        # init from dataframe
+        for col in tree.columns:
+            setattr(self, col, pd.Series(tree[col]))
+
+        if tree.index.name not in ('', None):
+            setattr(self, tree.index.name, pd.Series(tree.index))
+            for col in tree.columns:
+                getattr(self, col).reset_index(inplace=True, drop=True)
+
+    def _from_series(self, tree):
+        # init from series
+        for idx in tree.index:
+            setattr(self, idx, tree[idx])
+
+    def copy(self):
+        """Produce a copy of this object"""
+        copy = ttree()
+        for key, value in self.items():
+            if hasattr(value, 'copy'):
+                copy[key] = value.copy()
+            else:
+                copy[key] = value
+
+        return copy
+
+    @property
+    def entries(self): return len(self[tuple(self.keys())[0]])
 
     def get_subtree(self, entries):
         """Return a copy of self but only for a subset of entries
@@ -147,7 +211,18 @@ class ttree(attrdict):
             pd.DataFrame
         """
 
-        df = pd.DataFrame(self)
-        if 'timestamp' in df.columns:
-            df.set_index('timestamp', inplace=True)
+        try:
+            df = pd.DataFrame(self)
+        except ValueError:
+            df = pd.Series(self)
+
+        if type(df) is pd.DataFrame:
+            for col in ('timestamp', 'tUnixTimePrecise'):
+                if col in df.columns:
+                    df.set_index(col, inplace=True)
+                    break
+
+        # setup reconvert instructions
+        df.attrs['type'] = ttree
+
         return df

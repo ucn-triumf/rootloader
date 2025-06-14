@@ -14,6 +14,10 @@ class tleaf(object):
     def __init__(self, leaf):
         self._leaf = leaf
 
+    def copy(self):
+        """Make a copy of this object"""
+        return tleaf(self._leaf.copy())
+
     def get_entry(self, i):
         self._leaf.GetBranch().GetEntry(i)
         return self.value
