@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 import os
 import ROOT
+ROOT.EnableImplicitMT()
 
 class ttree(attrdict):
     """Extract ROOT.TTree fully into memory
