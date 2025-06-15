@@ -109,13 +109,21 @@ class ttree(attrdict):
         # fast version of getting events using RDataFrame
         data = ROOT.RDataFrame(tree).AsNumpy(columns=columns)
         for key, value in data.items():
-            setattr(self, key, pd.Series(value))
+            value = pd.Series(value)
+            try:
+                setattr(self, key, pd.to_numeric(value))
+            except Exception:            
+                setattr(self, key, value)
 
     def _extract_event_fast_filtered(self, tree, filter_str, columns):
         # fast version of getting events using RDataFrame
         data = ROOT.RDataFrame(tree).Filter(filter_str).AsNumpy(columns=columns)
         for key, value in data.items():
-            setattr(self, key, pd.Series(value))
+            value = pd.Series(value)
+            try:
+                setattr(self, key, pd.to_numeric(value))
+            except Exception:
+                setattr(self, key, value)
 
     def _extract_event(self, tree_entry):
         leaves = {}
