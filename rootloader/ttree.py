@@ -110,17 +110,15 @@ class ttree(attrdict):
         # fast version of getting events using RDataFrame
         data = ROOT.RDataFrame(tree).AsNumpy(columns=columns)
         for key, value in data.items():
-            value = pd.Series(value)
             try:
                 setattr(self, key, pd.to_numeric(value))
-            except Exception:            
+            except Exception:
                 setattr(self, key, value)
 
     def _extract_event_fast_filtered(self, tree, filter_str, columns):
         # fast version of getting events using RDataFrame
         data = ROOT.RDataFrame(tree).Filter(filter_str).AsNumpy(columns=columns)
         for key, value in data.items():
-            value = pd.Series(value)
             try:
                 setattr(self, key, pd.to_numeric(value))
             except Exception:
@@ -228,6 +226,7 @@ class ttree(attrdict):
             for col in ('timestamp', 'tUnixTimePrecise'):
                 if col in df.columns:
                     df.set_index(col, inplace=True)
+                    df.sort_index(inplace=True)
                     break
 
         # setup reconvert instructions
