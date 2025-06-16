@@ -110,6 +110,7 @@ class ttree(attrdict):
         # fast version of getting events using RDataFrame
         data = ROOT.RDataFrame(tree).AsNumpy(columns=columns)
         for key, value in data.items():
+            value = pd.Series(value)
             try:
                 setattr(self, key, pd.to_numeric(value))
             except Exception:
@@ -119,6 +120,7 @@ class ttree(attrdict):
         # fast version of getting events using RDataFrame
         data = ROOT.RDataFrame(tree).Filter(filter_str).AsNumpy(columns=columns)
         for key, value in data.items():
+            value = pd.Series(value)
             try:
                 setattr(self, key, pd.to_numeric(value))
             except Exception:
