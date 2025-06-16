@@ -228,7 +228,6 @@ class ttree(attrdict):
             for col in ('timestamp', 'tUnixTimePrecise'):
                 if col in df.columns:
                     df.set_index(col, inplace=True)
-                    df.sort_index(inplace=True)
                     break
 
         # setup reconvert instructions
