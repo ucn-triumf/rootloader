@@ -10,6 +10,7 @@ import warnings, os
 import numpy as np
 from tqdm import tqdm
 import pandas as pd
+import ROOT
 
 class tdirectory(attrdict):
     """Contains root file data
@@ -64,7 +65,7 @@ class tdirectory(attrdict):
             # TTree
             if 'TTree' == classname:
                 if empty_ok or obj.GetEntries() > 0:
-                    self[name] = ttree(obj, *tree_filter.get(name, (None, None)))
+                    self[name] = ttree(obj)
                 elif not quiet:
                     tqdm.write(f'Skipped "{name}" due to lack of entries')
 

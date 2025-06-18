@@ -1,87 +1,115 @@
-# TTree parser
+    # TTree object for the giant UCN hits trees
 # Derek Fujimoto
-# June 2024
+# June 2025
 
-from .attrdict import attrdict
-from tqdm import tqdm
-import numpy as np
+from .th1 import th1
+from .th2 import th2
+from collections.abc import Iterable
 import pandas as pd
+import numpy as np
 import os
 import ROOT
 ROOT.EnableImplicitMT()
 
-class ttree(attrdict):
-    """Extract ROOT.TTree fully into memory
+class ttree(object):
+    """Extract ROOT.TTree with lazy operation. Looks like a dataframe in most ways
 
     Args:
-        tree (ROOT.TTree|pd.DataFrame): tree to load
+        tree (str|hitstree): tree to load
         filter_string (str|None): if not none then pass this to [`RDataFrame.Filter`](https://root.cern/doc/master/classROOT_1_1RDF_1_1RInterface.html#ad6a94ba7e70fc8f6425a40a4057d40a0)
         columns (list|None): list of column names to include in fetch, if None, get all
     """
 
-    def __init__(self, tree=None, filter_str=None, columns=None):
+    def __init__(self, tree, filename=None):
 
-        if tree is None:
-            return
+        # copy
+        if isinstance(tree, ttree):
+            self._treename = tree._treename
+            self._filename = tree._filename
 
-        # check input
-        if isinstance(columns, str):
-            columns = [columns]
-
-        # extract from dataframe
-        if type(tree) is pd.DataFrame:
-            self._from_dataframe(tree)
-            return
-        elif type(tree) is pd.Series:
-            self._from_series(tree)
-            return
-
-        # if ttree input, then copy
-        elif type(tree) is ttree:
-            for key, value in tree.items():
-                if hasattr(value, 'copy'):
-                    self[key] = value.copy()
-                else:
-                    self[key] = value
-            return
-
-        # extraction of data: fast
-        try:
-            if filter_str is None:
-                data = self._extract_event_fast(tree, columns)
+            if isinstance(self._treename, str):
+                self._rdf = ROOT.RDataFrame(self._treename, self._filename)
             else:
-                data = self._extract_event_fast_filtered(tree, filter_str, columns)
+                self._rdf = ROOT.RDataFrame(self._treename)
+            self._columns = tree._columns
+            self._index = tree._index
+            self._filters = tree._filters.copy()
 
-        # if there is a problem, revert to slower, but more robust version
-        except Exception:
+        # new from path or TTree
+        elif isinstance(tree, (str, ROOT.TTree)):
 
-            tqdm.write(f"{tree.GetName()}: Reverting to robust ttree reader")
-            entries = tree.GetEntries()
-            if entries == 0: return
+            if isinstance(filename, str) and isinstance(tree, str):
+                self._rdf = ROOT.RDataFrame(tree, filename)
+            elif isinstance(tree, ROOT.TTree):
+                self._rdf = ROOT.RDataFrame(tree)
+            else:
+                raise TypeError(f'Unknown input tree type {type(tree)}')
+            self._columns = ('tEntry')
+            self._columns = tuple((str(s) for s in self._rdf.GetColumnNames()))
+            self._filters = list()
+            self._treename = tree
+            self._filename = filename
 
-            iterator = tqdm(zip(tree, range(entries)), total=entries, leave=False,
-                            desc=f'Loading {tree.GetName()}')
-            data = pd.concat(map(self._extract_event, iterator))
+            # set index, default to times
+            if 'tUnixTimePrecise' in self._columns:
+                self._index = 'tUnixTimePrecise'
+            elif 'timestamp' in self._columns:
+                self._index = 'timestamp'
+            elif 'tEntry' in self._columns:
+                self._index = 'tEntry'
+            else:
+                self._index = None
 
-            # setup tree structure in self
-            for br in tree.GetListOfBranches():
-                branch = attrdict()
-                for leaf in br.GetListOfLeaves():
-                    branch[leaf.GetName()] = data.loc[:, f'{leaf.GetFullName()}']
+        # viewing - see __getitem__
+        elif tree is None:
+            return
 
-                if len(list(branch.keys())) > 1:
-                    setattr(self, br.GetName(), branch)
-                else:
-                    setattr(self, br.GetName(), branch[leaf.GetName()])
+        else:
+            raise RuntimeError(f'tree must be of type ttree|str|ROOT.TTree, not {type(tree)}')
+
+        # set filters
+        for filt in self._filters:
+            self._rdf = self._rdf.Filter(filt, filt)
+
+        # track stats
+        self._stats = {}
 
     def __dir__(self):
-        return sorted(self.keys())
+        superdir = [d for d in super().__dir__() if d[0] != '_']
+        return sorted(self._columns) + superdir
+
+    def __getattr__(self, name):
+        if name in self._columns:
+            return self[name]
+        else:
+            return getattr(object, name)
+
+    def __getitem__(self, key):
+        """Fetch a new dataframe with fewer 'columns', as a memory view"""
+
+        h = ttree(None)
+
+        h._treename = self._treename
+        h._filename = self._filename
+        h._rdf = self._rdf
+        h._columns = self._columns
+        h._index = self._index
+        h._filters = self._filters
+        h._stats = self._stats
+
+        # get list of keys
+        if isinstance(key, str):
+            h._columns = (key,)
+        else:
+            h._columns = tuple(key)
+
+        return h
 
     def __len__(self):
-        return self.entries
+        return self.size
 
     def __repr__(self):
-        klist = list(self.keys())
+        klist = list(self._columns)
         if klist:
             klist.sort()
 
@@ -106,131 +134,241 @@ class ttree(attrdict):
         else:
             return self.__class__.__name__ + "()"
 
-    def _extract_event_fast(self, tree, columns):
-        # fast version of getting events using RDataFrame
-        data = ROOT.RDataFrame(tree).AsNumpy(columns=columns)
-        for key, value in data.items():
-            value = pd.Series(value)
-            try:
-                setattr(self, key, pd.to_numeric(value))
-            except Exception:
-                setattr(self, key, value)
-
-    def _extract_event_fast_filtered(self, tree, filter_str, columns):
-        # fast version of getting events using RDataFrame
-        data = ROOT.RDataFrame(tree).Filter(filter_str).AsNumpy(columns=columns)
-        for key, value in data.items():
-            value = pd.Series(value)
-            try:
-                setattr(self, key, pd.to_numeric(value))
-            except Exception:
-                setattr(self, key, value)
-
-    def _extract_event(self, tree_entry):
-        leaves = {}
-
-        tree, entry = tree_entry
-        for leaf in tree.GetListOfLeaves():
-            name = str(leaf.GetFullName())
-            len = leaf.GetLen()
-
-            # strings are special
-            if leaf.ClassName() == "TLeafElement":
-                leaftype = 'str'
-
-            # numerical data types
-            else:
-                leaftype = leaf.ClassName()[-1].lower()
-
-            if len == 1:
-                if leaftype == 'str':
-                    leaves[name] = ''.join((x for x in getattr(tree, name)))
-                else:
-                    leaves[name] = [leaf.GetValue()]
-            else:
-                leaves[name] = [np.fromiter((leaf.GetValue(i) for i in range(len)),
-                                        dtype = leaftype)]
-
-        return pd.DataFrame(leaves, index=[entry])
-
-    def _from_dataframe(self, tree):
-        # init from dataframe
-        for col in tree.columns:
-            setattr(self, col, pd.Series(tree[col]))
-
-        if tree.index.name not in ('', None):
-            setattr(self, tree.index.name, pd.Series(tree.index))
-            for col in tree.columns:
-                getattr(self, col).reset_index(inplace=True, drop=True)
-
-    def _from_series(self, tree):
-        # init from series
-        for idx in tree.index:
-            setattr(self, idx, tree[idx])
-
-    def copy(self):
-        """Produce a copy of this object"""
-        copy = ttree()
-        for key, value in self.items():
-            if hasattr(value, 'copy'):
-                copy[key] = value.copy()
-            else:
-                copy[key] = value
-
-        return copy
-
-    @property
-    def entries(self): return len(self[tuple(self.keys())[0]])
-
-    def get_subtree(self, entries):
-        """Return a copy of self but only for a subset of entries
+    def hist1d(self, column=None, nbins=None, step=None):
+        """Return histogram of column
 
         Args:
-            entries (list|np.array): list of entries to get from tree
+            column (str): column name, needed if more than one column
+            nbins (int): number of bins, span full range
+            step (float): bin spacing, span full range
+
+            Pick one or the other
 
         Returns:
-            ttree: copy with reduced entries
+            rootloader.th1
         """
 
-        copy = ttree(None)
+        # get column name
+        if column is None:
+            if len(self._columns) > 1:
+                raise KeyError('tree has more than one column, please specify')
+            column = self._columns[0]
+        else:
+            if column not in self._columns:
+                raise KeyError(f'Column "{column}" must be one of {self._columns}')
 
-        for brname, br in self.items():
-            if type(br) is attrdict:
-                newbr = attrdict()
-                for leafname, leaf in br.items():
-                    newbr[leafname] = leaf[entries]
-                setattr(copy, brname, newbr)
-            else:
-                setattr(copy, brname, br.loc[entries])
-        return copy
+        # need at least one of nbins and step
+        if nbins is None and step is None:
+            raise RuntimeError('Specify nbins or step')
+        if nbins is not None and step is not None:
+            raise RuntimeError('Must specify either nbins or step, not both')
 
-    def plot(self, *args, **kwargs):
-        """Convert to dataframe and plot. Arguments passed to [pandas.DataFrame.plot](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.plot.html)
+        # range of histogram
+        minval = self[column].min()
+        maxval = self[column].max()
+
+        # set n bins
+        if step is not None:
+            nbins = (maxval-minval)/step
+        nbins = int(nbins)
+
+        # histogram
+        hist = self._rdf.Histo1D((f'Hist{column}', f";{column};Count", nbins, minval, maxval), column)
+
+        return th1(hist)
+
+    def hist2d(self, columnx=None, columny=None,
+               nxbins=None, nybins=None, xstep=None, ystep=None):
+        """Return histogram of two columns
+
+        Args:
+            column (str): column name, needed if more than one column
+            nbins (int): number of bins, span full range
+            step (float): bin spacing, span full range
 
         Returns:
-            same as pandas.DataFrame.plot
+            rootloader.th2
         """
-        return self.to_dataframe().plot(*args, **kwargs)
+
+        # get column names
+        if columnx is None:
+            if len(self._columns) > 2:
+                raise KeyError('tree has more than two columns, please specify')
+            elif len(self._columns) < 2:
+                raise KeyError('tree has fewer than two columns, please specify')
+            columnx = self._columns[0]
+        else:
+            if columnx not in self._columns:
+                raise KeyError(f'Columnx "{columnx}" must be one of {self._columns}')
+
+        if columny is None:
+            if len(self._columns) > 2:
+                raise KeyError('tree has more than two columns, please specify')
+            elif len(self._columns) < 2:
+                raise KeyError('tree has fewer than two columns, please specify')
+            columny = self._columns[1]
+        else:
+            if columny not in self._columns:
+                raise KeyError(f'Columny "{columny}" must be one of {self._columns}')
+
+        # need at least one of nbins and step
+        if nxbins is None and xstep is None:
+            raise RuntimeError('Specify nxbins or xstep')
+        if nxbins is not None and xstep is not None:
+            raise RuntimeError('Must specify either nxbins or xstep, not both')
+
+        if nybins is None and ystep is None:
+            raise RuntimeError('Specify nybins or ystep')
+        if nybins is not None and ystep is not None:
+            raise RuntimeError('Must specify either nybins or ystep, not both')
+
+
+        # range of histogram
+        minvalx = self[columnx].min()
+        maxvalx = self[columnx].max()
+
+        minvaly = self[columny].min()
+        maxvaly = self[columny].max()
+
+        # set n bins
+        if xstep is not None:
+            nxbins = (maxvalx-minvalx)/xstep
+        nxbins = int(nxbins)
+
+        if ystep is not None:
+            nybins = (maxvaly-minvaly)/ystep
+        nybins = int(nybins)
+
+        # histogram
+        hist = self._rdf.Histo2D((f'Hist{columnx}_{columny}',
+                                  f";{columnx};{columny}",
+                                  nxbins, minvalx, maxvalx,
+                                  nybins, minvaly, maxvaly), columnx, columny)
+
+        return th2(hist)
+
+    def reset_columns(self):
+        """Include all columns again"""
+        self._columns = tuple((str(s) for s in self._rdf.GetColumnNames()))
+
+    def set_index(self, column):
+        if column not in self._columns:
+            raise KeyError(f'{column} not found in branch names list: {self._columns}')
+        self._index = column
+
+    def set_filter(self, expression):
+        self._rdf = self._rdf.Filter(expression, expression)
+        self._filters.append(expression)
+        self._stats = {}
 
     def to_dataframe(self):
-        """Convert tree to pandas dataframe
+        """Return pandas dataframe of the data"""
 
-        Returns:
-            pd.DataFrame
-        """
+        df = self.to_dict()
 
-        try:
-            df = pd.DataFrame(self)
-        except ValueError:
-            df = pd.Series(self)
+        # convert root strings
+        for key, val in df.items():
+            if isinstance(val, ROOT.module.cppyy.gbl.std.string):
+                df[key] = str(val)
+            elif isinstance(val, Iterable):
+                df[key] = np.fromiter((str(v) for v in val), dtype=object)
 
-        if type(df) is pd.DataFrame:
-            for col in ('timestamp', 'tUnixTimePrecise'):
-                if col in df.columns:
-                    df.set_index(col, inplace=True)
-                    break
+        df = pd.DataFrame(df)
 
-        # setup reconvert instructions
-        df.attrs['type'] = ttree
+        # set index
+        if self._index is not None:
+            df.set_index(self._index, inplace=True)
 
         return df
+
+    def to_dict(self):
+
+        # ensure index is loaded
+        if self._index not in self._columns and self._index is not None:
+            columns = [*self._columns, self._index]
+        else:
+            columns = self._columns
+
+        return self._rdf.AsNumpy(columns=columns)
+
+    # PROPERTIES ===========================
+    @property
+    def columns(self):
+        return self._columns
+    @property
+    def filters(self):
+        return self._filters
+    @property
+    def index(self):
+        return self[self._index]
+    @property
+    def index_name(self):
+        return self._index
+    @property
+    def loc(self):
+        return _ttree_indexed(self)
+    @property
+    def size(self):
+        try:
+            return self._stats['size']
+        except KeyError:
+            self._stats['size'] = self._rdf.Count().GetValue()
+            return self.size
+
+    # STATS ================================
+    def _get_stats(self, col):
+        try:
+            return self._stats[col]
+        except KeyError:
+            self._stats[col] = self._rdf.Stats(col).GetValue()
+            return self._stats[col]
+
+    def min(self):
+        vals = [self._get_stats(col).GetMin() for col in self._columns]
+        if len(vals) == 1:  return vals[0]
+        return pd.Series(vals, index=self._columns)
+
+    def max(self):
+        vals = [self._get_stats(col).GetMax() for col in self._columns]
+        if len(vals) == 1:  return vals[0]
+        return pd.Series(vals, index=self._columns)
+
+    def mean(self):
+        vals = [self._get_stats[col].GetMean() for col in self._columns]
+        if len(vals) == 1:  return vals[0]
+        return pd.Series(vals, index=self._columns)
+
+    def rms(self):
+        vals = [self._get_stats[col].GetRMS() for col in self._columns]
+        if len(vals) == 1:  return vals[0]
+        return pd.Series(vals, index=self._columns)
+
+    def std(self):
+        vals = [self._rdf.StdDev(col).GetValue() for col in self._columns]
+        if len(vals) == 1:  return vals[0]
+        return pd.Series(vals, index=self._columns)
+
+# ttree but slice on time
+class _ttree_indexed(object):
+
+    def __init__(self, tree):
+        self._tree = ttree(tree)
+
+    def __getitem__(self, key):
+
+        # get rdataframe
+        tr = self._tree
+
+        # set fancy slicing
+        if isinstance(key, slice):
+            if key.start is not None:
+                tr.set_filter(f'{tr._index} >= {key.start}')
+            if key.stop is not None:
+                tr.set_filter(f'{tr._index} < {key.stop}')
+            if key.step is not None:
+                raise NotImplementedError('Slicing steps not implemented')
+
+        elif isinstance(key, (int, float)):
+            tr.set_filter(f'{self._index} == {key}')
+
+        return tr
