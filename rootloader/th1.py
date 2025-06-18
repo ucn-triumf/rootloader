@@ -91,12 +91,13 @@ class th1(object):
 
         return copy
 
-    def plot(self, ax=None, data_only=False, **kwargs):
+    def plot(self, ax=None, data_only=False, errors=False, **kwargs):
         """Draw the histogram
 
         Args:
             ax (plt.Axes): if None, draw in current axes, else draw on ax
             data_only (bool): if true don't set axis labels, title
+            errors (bool): if true draw plt.errorbar, else plt.plot
             kwargs: passed to matplotlib.pyplot.errorbar
         """
 
@@ -105,12 +106,16 @@ class th1(object):
             ax = plt.gca()
 
         # get kwargs defaults if not present
-        for key, val in self.draw_defaults.items():
-            if key not in kwargs.keys():
-                kwargs[key] = val
+        if errors:
+            for key, val in self.draw_defaults.items():
+                if key not in kwargs.keys():
+                    kwargs[key] = val
 
         # draw
-        ax.errorbar(self.x, self.y, self.dy, **kwargs)
+        if errors:
+            ax.errorbar(self.x, self.y, self.dy, **kwargs)
+        else:
+            ax.plot(self.x, self.y, **kwargs)
 
         # plot elements
         if not data_only:
