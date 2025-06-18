@@ -266,12 +266,15 @@ class ttree(object):
 
         df = self.to_dict()
 
-        # convert root strings
+        # convert root data types into python data types
         for key, val in df.items():
             if isinstance(val, ROOT.module.cppyy.gbl.std.string):
                 df[key] = str(val)
             elif isinstance(val, Iterable):
-                df[key] = np.fromiter((str(v) for v in val), dtype=object)
+                if isinstance(val[0], ROOT.module.cppyy.gbl.std.string):
+                    df[key] = np.fromiter((str(v) for v in val), dtype=object)
+                elif isinstance(val[0], (ROOT.RVec('int'), ROOT.RVec('float'))):
+                    df[key] = np.fromiter((np.asarray(v) for v in val), dtype=object)
 
         df = pd.DataFrame(df)
 

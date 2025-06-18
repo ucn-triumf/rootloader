@@ -34,10 +34,10 @@ class tfile(tdirectory):
             raise IOError(f'The path "{filename}" does not point to a file')
 
         # open file
-        self.fid = ROOT.TFile(filename, 'READ')
+        self._fid = ROOT.TFile(filename, 'READ')
 
         # get contents
-        super().__init__(self.fid,
+        super().__init__(self._fid,
                          empty_ok=empty_ok,
                          quiet=quiet,
                          key_filter=key_filter,
