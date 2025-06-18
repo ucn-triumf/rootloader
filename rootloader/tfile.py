@@ -34,18 +34,15 @@ class tfile(tdirectory):
             raise IOError(f'The path "{filename}" does not point to a file')
 
         # open file
-        fid = ROOT.TFile(filename, 'READ')
+        self.fid = ROOT.TFile(filename, 'READ')
 
         # get contents
-        super().__init__(fid,
+        super().__init__(self.fid,
                          empty_ok=empty_ok,
                          quiet=quiet,
                          key_filter=key_filter,
                          tree_filter=tree_filter,
                          )
-
-        # close the file
-        fid.Close()
 
         # convert to dataframe
         if as_dataframe:
