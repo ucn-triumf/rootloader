@@ -20,35 +20,24 @@ class ttree(object):
         columns (list|None): list of column names to include in fetch, if None, get all
     """
 
-    def __init__(self, tree, filename=None):
+    def __init__(self, tree):
 
         # copy
         if isinstance(tree, ttree):
-            self._treename = tree._treename
-            self._filename = tree._filename
-
-            if isinstance(self._treename, str):
-                self._rdf = ROOT.RDataFrame(self._treename, self._filename)
-            else:
-                self._rdf = ROOT.RDataFrame(self._treename)
+            self._rdf = ROOT.RDataFrame(tree._tree)
+            self._tree = tree
             self._columns = tree._columns
             self._index = tree._index
             self._filters = tree._filters.copy()
 
         # new from path or TTree
-        elif isinstance(tree, (str, ROOT.TTree)):
+        elif isinstance(tree, ROOT.TTree):
 
-            if isinstance(filename, str) and isinstance(tree, str):
-                self._rdf = ROOT.RDataFrame(tree, filename)
-            elif isinstance(tree, ROOT.TTree):
-                self._rdf = ROOT.RDataFrame(tree)
-            else:
-                raise TypeError(f'Unknown input tree type {type(tree)}')
+            self._rdf = ROOT.RDataFrame(tree)
             self._columns = ('tEntry')
             self._columns = tuple((str(s) for s in self._rdf.GetColumnNames()))
             self._filters = list()
-            self._treename = tree
-            self._filename = filename
+            self._tree = tree
 
             # set index, default to times
             if 'tUnixTimePrecise' in self._columns:
@@ -89,8 +78,7 @@ class ttree(object):
 
         h = ttree(None)
 
-        h._treename = self._treename
-        h._filename = self._filename
+        h._tree = self._tree
         h._rdf = self._rdf
         h._columns = self._columns
         h._index = self._index
@@ -169,7 +157,8 @@ class ttree(object):
 
         # set n bins
         if step is not None:
-            nbins = (maxval-minval)/step
+            nbins = int(np.ceil((maxval-minval)/step))
+            maxval = nbins*step + minval    # ensure proper bin size
         nbins = int(nbins)
 
         # histogram
@@ -232,11 +221,13 @@ class ttree(object):
 
         # set n bins
         if xstep is not None:
-            nxbins = (maxvalx-minvalx)/xstep
+            nxbins = int(np.ceil((maxvalx-minvalx)/xstep))
+            maxvalx = nxbins*xstep + minvalx    # ensure proper bin size
         nxbins = int(nxbins)
 
         if ystep is not None:
-            nybins = (maxvaly-minvaly)/ystep
+            nybins = int(np.ceil((maxvaly-minvaly)/ystep))
+            maxvaly = nybins*ystep + minvaly    # ensure proper bin size
         nybins = int(nybins)
 
         # histogram
@@ -246,6 +237,10 @@ class ttree(object):
                                   nybins, minvaly, maxvaly), columnx, columny)
 
         return th2(hist)
+
+    def reset(self):
+        """Make a new tree"""
+        return ttree(self._tree)
 
     def reset_columns(self):
         """Include all columns again"""
@@ -281,6 +276,10 @@ class ttree(object):
         # set index
         if self._index is not None:
             df.set_index(self._index, inplace=True)
+
+        # convert to series?
+        if len(df.columns) == 1:
+            return df[df.columns[0]]
 
         return df
 
