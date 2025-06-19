@@ -99,6 +99,9 @@ class th1(object):
             data_only (bool): if true don't set axis labels, title
             errors (bool): if true draw plt.errorbar, else plt.plot
             kwargs: passed to matplotlib.pyplot.errorbar
+
+        Returns:
+            output of plt.errorbar or plt.plot
         """
 
         # get axes
@@ -113,9 +116,9 @@ class th1(object):
 
         # draw
         if errors:
-            ax.errorbar(self.x, self.y, self.dy, **kwargs)
+            line = ax.errorbar(self.x, self.y, self.dy, **kwargs)
         else:
-            ax.plot(self.x, self.y, **kwargs)
+            line = ax.plot(self.x, self.y, **kwargs)
 
         # plot elements
         if not data_only:
@@ -128,6 +131,8 @@ class th1(object):
 
             ax.set_title(self.title, fontsize='x-small')
             plt.tight_layout()
+
+        return line
 
     def to_dataframe(self):
         """Convert tree to pandas dataframe

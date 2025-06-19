@@ -25,7 +25,7 @@ class ttree(object):
         # copy
         if isinstance(tree, ttree):
             self._rdf = ROOT.RDataFrame(tree._tree)
-            self._tree = tree
+            self._tree = tree._tree
             self._columns = tree._columns
             self._index = tree._index
             self._filters = tree._filters.copy()
@@ -251,10 +251,17 @@ class ttree(object):
             raise KeyError(f'{column} not found in branch names list: {self._columns}')
         self._index = column
 
-    def set_filter(self, expression):
-        self._rdf = self._rdf.Filter(expression, expression)
-        self._filters.append(expression)
-        self._stats = {}
+    def set_filter(self, expression, inplace=False):
+        """Set a filter on the dataframe to select a subset of the data"""
+
+        if inplace:
+            self._rdf = self._rdf.Filter(expression, expression)
+            self._filters.append(expression)
+            self._stats = {}
+        else:
+            new = ttree(self)
+            new.set_filter(expression, inplace=True)
+            return new
 
     def to_dataframe(self):
         """Return pandas dataframe of the data"""
@@ -364,13 +371,13 @@ class _ttree_indexed(object):
         # set fancy slicing
         if isinstance(key, slice):
             if key.start is not None:
-                tr.set_filter(f'{tr._index} >= {key.start}')
+                tr.set_filter(f'{tr._index} >= {key.start}', inplace=True)
             if key.stop is not None:
-                tr.set_filter(f'{tr._index} < {key.stop}')
+                tr.set_filter(f'{tr._index} < {key.stop}', inplace=True)
             if key.step is not None:
                 raise NotImplementedError('Slicing steps not implemented')
 
         elif isinstance(key, (int, float)):
-            tr.set_filter(f'{self._index} == {key}')
+            tr.set_filter(f'{self._index} == {key}', inplace=True)
 
         return tr
