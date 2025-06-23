@@ -29,6 +29,7 @@ class ttree(object):
             self._columns = tree._columns
             self._index = tree._index
             self._filters = tree._filters.copy()
+            self.name = tree.name
 
         # new from path or TTree
         elif isinstance(tree, ROOT.TTree):
@@ -38,6 +39,7 @@ class ttree(object):
             self._columns = tuple((str(s) for s in self._rdf.GetColumnNames()))
             self._filters = list()
             self._tree = tree
+            self.name = tree.GetName()
 
             # set index, default to times
             if 'tUnixTimePrecise' in self._columns:
@@ -63,9 +65,6 @@ class ttree(object):
         # track stats
         self._stats = {}
 
-        # name
-        self.name = tree.GetName()
-
     def __dir__(self):
         superdir = [d for d in super().__dir__() if d[0] != '_']
         return sorted(self._columns) + superdir
@@ -87,6 +86,7 @@ class ttree(object):
         h._index = self._index
         h._filters = self._filters
         h._stats = self._stats
+        h._name = self._name
 
         # get list of keys
         if isinstance(key, str):
@@ -250,6 +250,7 @@ class ttree(object):
         self._columns = tuple((str(s) for s in self._rdf.GetColumnNames()))
 
     def set_index(self, column):
+        """Set the index column name"""
         if column not in self._columns:
             raise KeyError(f'{column} not found in branch names list: {self._columns}')
         self._index = column
