@@ -46,7 +46,7 @@ class tfile(tdirectory):
 
 ### tfile.copy
 
-[Show source in tfile.py:54](../../rootloader/tfile.py#L54)
+[Show source in tfile.py:51](../../rootloader/tfile.py#L51)
 
 Make a copy of this object
 

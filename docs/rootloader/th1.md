@@ -64,17 +64,22 @@ Draw the histogram
 
 - `ax` *plt.Axes* - if None, draw in current axes, else draw on ax
 - `data_only` *bool* - if true don't set axis labels, title
+- `errors` *bool* - if true draw plt.errorbar, else plt.plot
 - `kwargs` - passed to matplotlib.pyplot.errorbar
+
+#### Returns
+
+output of plt.errorbar or plt.plot
 
 #### Signature
 
 ```python
-def plot(self, ax=None, data_only=False, **kwargs): ...
+def plot(self, ax=None, data_only=False, errors=False, **kwargs): ...
 ```
 
 ### th1.to_dataframe
 
-[Show source in th1.py:122](../../rootloader/th1.py#L122)
+[Show source in th1.py:137](../../rootloader/th1.py#L137)
 
 Convert tree to pandas dataframe
 
