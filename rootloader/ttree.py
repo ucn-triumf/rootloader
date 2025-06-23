@@ -63,6 +63,9 @@ class ttree(object):
         # track stats
         self._stats = {}
 
+        # name
+        self.name = tree.GetName()
+
     def __dir__(self):
         superdir = [d for d in super().__dir__() if d[0] != '_']
         return sorted(self._columns) + superdir
