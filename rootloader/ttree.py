@@ -53,6 +53,7 @@ class ttree(object):
 
         # viewing - see __getitem__
         elif tree is None:
+            self.name = None
             return
 
         else:
@@ -86,7 +87,7 @@ class ttree(object):
         h._index = self._index
         h._filters = self._filters
         h._stats = self._stats
-        h._name = self._name
+        h.name = self.name
 
         # get list of keys
         if isinstance(key, str):
