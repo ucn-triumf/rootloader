@@ -348,12 +348,12 @@ class ttree(object):
         return pd.Series(vals, index=self._columns)
 
     def mean(self):
-        vals = [self._get_stats[col].GetMean() for col in self._columns]
+        vals = [self._get_stats(col).GetMean() for col in self._columns]
         if len(vals) == 1:  return vals[0]
         return pd.Series(vals, index=self._columns)
 
     def rms(self):
-        vals = [self._get_stats[col].GetRMS() for col in self._columns]
+        vals = [self._get_stats(col).GetRMS() for col in self._columns]
         if len(vals) == 1:  return vals[0]
         return pd.Series(vals, index=self._columns)
 
