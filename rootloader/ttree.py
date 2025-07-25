@@ -126,15 +126,16 @@ class ttree(object):
         else:
             return self.__class__.__name__ + "()"
 
-    def hist1d(self, column=None, nbins=None, step=None):
+    def hist1d(self, column=None, nbins=None, step=None, edges=None):
         """Return histogram of column
 
         Args:
             column (str): column name, needed if more than one column
             nbins (int): number of bins, span full range
             step (float): bin spacing, span full range
+            edges (array-like): custom bin edges
 
-            Pick one or the other
+            Pick one of nbins|step|edges
 
         Returns:
             rootloader.th1
@@ -149,24 +150,32 @@ class ttree(object):
             if column not in self._columns:
                 raise KeyError(f'Column "{column}" must be one of {self._columns}')
 
-        # need at least one of nbins and step
-        if nbins is None and step is None:
-            raise RuntimeError('Specify nbins or step')
-        if nbins is not None and step is not None:
-            raise RuntimeError('Must specify either nbins or step, not both')
+        # need at least one of nbins and step and edges
+        if nbins is None and step is None and edges is None:
+            raise RuntimeError('Specify nbins or step or edges')
+        if sum((nbins is not None, step is not None, edges is not None)) > 1:
+            raise RuntimeError('Must specify only one of nbins, step, or edges')
 
-        # range of histogram
-        minval = self[column].min()
-        maxval = self[column].max()
+        # get via custom edges
+        if edges is not None:
+            nbins = len(edges)-1
+            hist = self._rdf.Histo1D((f'Hist{column}', f";{column};Count", nbins, edges), column)
 
-        # set n bins
-        if step is not None:
-            nbins = int(np.ceil((maxval-minval)/step))
-            maxval = nbins*step + minval    # ensure proper bin size
-        nbins = int(nbins)
+        # get via nbins or step
+        else:
 
-        # histogram
-        hist = self._rdf.Histo1D((f'Hist{column}', f";{column};Count", nbins, minval, maxval), column)
+            # range of histogram
+            minval = self[column].min()
+            maxval = self[column].max()
+
+            # set n bins
+            if step is not None:
+                nbins = int(np.ceil((maxval-minval)/step))
+                maxval = nbins*step + minval    # ensure proper bin size
+            nbins = int(nbins)
+
+            # histogram
+            hist = self._rdf.Histo1D((f'Hist{column}', f";{column};Count", nbins, minval, maxval), column)
 
         return th1(hist)
 
