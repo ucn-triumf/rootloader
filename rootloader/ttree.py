@@ -36,7 +36,7 @@ class ttree(object):
 
             self._rdf = ROOT.RDataFrame(tree)
             self._columns = ('tEntry')
-            self._columns = tuple((str(s) for s in self._rdf.GetColumnNames()))
+            self._columns = tuple((str(s).strip() for s in self._rdf.GetColumnNames()))
             self._filters = list()
             self._tree = tree
             self.name = tree.GetName()
