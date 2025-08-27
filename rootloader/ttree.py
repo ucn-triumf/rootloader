@@ -63,9 +63,6 @@ class ttree(object):
         for filt in self._filters:
             self._rdf = self._rdf.Filter(filt, filt)
 
-        # track stats
-        self._stats = {}
-
     def __dir__(self):
         superdir = [d for d in super().__dir__() if d[0] != '_']
         return sorted(self._columns) + superdir
@@ -86,7 +83,6 @@ class ttree(object):
         h._columns = self._columns
         h._index = self._index
         h._filters = self._filters
-        h._stats = self._stats
         h.name = self.name
 
         # get list of keys
@@ -271,7 +267,6 @@ class ttree(object):
         if inplace:
             self._rdf = self._rdf.Filter(expression, expression)
             self._filters.append(expression)
-            self._stats = {}
         else:
             new = ttree(self)
             new.set_filter(expression, inplace=True)
@@ -335,44 +330,19 @@ class ttree(object):
         return _ttree_indexed(self)
     @property
     def size(self):
-        try:
-            return self._stats['size']
-        except KeyError:
-            self._stats['size'] = self._rdf.Count().GetValue()
-            return self.size
+        return self._rdf.Count().GetValue()
 
     # STATS ================================
-    def _get_stats(self, col):
-        try:
-            return self._stats[col]
-        except KeyError:
-            self._stats[col] = self._rdf.Stats(col).GetValue()
-            return self._stats[col]
+    def _getstat(self, stat):
+        val = pd.DataFrame(self._rdf.AsNumpy(columns=self._columns))
+        val = getattr(val, stat)()
+        if len(val) == 1:   return val.iloc[0]
+        else:               return val
 
-    def min(self):
-        vals = [self._get_stats(col).GetMin() for col in self._columns]
-        if len(vals) == 1:  return vals[0]
-        return pd.Series(vals, index=self._columns)
-
-    def max(self):
-        vals = [self._get_stats(col).GetMax() for col in self._columns]
-        if len(vals) == 1:  return vals[0]
-        return pd.Series(vals, index=self._columns)
-
-    def mean(self):
-        vals = [self._get_stats(col).GetMean() for col in self._columns]
-        if len(vals) == 1:  return vals[0]
-        return pd.Series(vals, index=self._columns)
-
-    def rms(self):
-        vals = [self._get_stats(col).GetRMS() for col in self._columns]
-        if len(vals) == 1:  return vals[0]
-        return pd.Series(vals, index=self._columns)
-
-    def std(self):
-        vals = [self._rdf.StdDev(col).GetValue() for col in self._columns]
-        if len(vals) == 1:  return vals[0]
-        return pd.Series(vals, index=self._columns)
+    def min(self):  return self._getstat('min')
+    def max(self):  return self._getstat('max')
+    def mean(self): return self._getstat('mean')
+    def std(self):  return self._getstat('std')
 
 # ttree but slice on time
 class _ttree_indexed(object):
