@@ -11,6 +11,50 @@ import os
 import ROOT
 ROOT.EnableImplicitMT()
 
+# pre-compile stats functions to avoid memory creep during JIT compilations
+cpp_code = """
+Double_t RDF_min_d(ROOT::RDataFrame df, string col){
+    return df.Min<Double_t>(col).GetValue();
+}
+
+Double_t RDF_max_d(ROOT::RDataFrame df, string col){
+    return df.Max<Double_t>(col).GetValue();
+}
+
+Double_t RDF_mean_d(ROOT::RDataFrame df, string col){
+    return df.Mean<Double_t>(col).GetValue();
+}
+
+Double_t RDF_std_d(ROOT::RDataFrame df, string col){
+    return df.StdDev<Double_t>(col).GetValue();
+}
+
+Double_t RDF_sum_d(ROOT::RDataFrame df, string col){
+    return df.Sum<Double_t>(col).GetValue();
+}
+
+Int_t RDF_min_i(ROOT::RDataFrame df, string col){
+    return df.Min<Int_t>(col).GetValue();
+}
+
+Int_t RDF_max_i(ROOT::RDataFrame df, string col){
+    return df.Max<Int_t>(col).GetValue();
+}
+
+Int_t RDF_mean_i(ROOT::RDataFrame df, string col){
+    return df.Mean<Int_t>(col).GetValue();
+}
+
+Int_t RDF_std_i(ROOT::RDataFrame df, string col){
+    return df.StdDev<Int_t>(col).GetValue();
+}
+
+Int_t RDF_sum_i(ROOT::RDataFrame df, string col){
+    return df.Sum<Int_t>(col).GetValue();
+}
+"""
+ROOT.gInterpreter.Declare(cpp_code)
+
 class ttree(object):
     """Extract ROOT.TTree with lazy operation. Looks like a dataframe in most ways
 
@@ -333,15 +377,24 @@ class ttree(object):
         return self._rdf.Count().GetValue()
 
     # STATS ================================
-    def _getstat(self, stat):
-        val = pd.DataFrame(self._rdf.AsNumpy(columns=self._columns))
-        val = getattr(val, stat)()
-        if len(val) == 1:   return val.iloc[0]
-        else:               return val
+    def _getstat(self, fnname):
+
+        double_fn = getattr(ROOT, f'RDF_{fnname}_d')
+        int_fn = getattr(ROOT, f'RDF_{fnname}_i')
+
+        vals = []
+        for col in self._columns:
+            dtype = self._rdf.GetColumnType(col)
+            if dtype == 'Double_t':
+                vals.append(double_fn(self._rdf, col))
+            elif dtype == 'Int_t':
+                vals.append(int_fn(self._rdf, col))
+        return pd.Series(vals, index=self._columns)
 
     def min(self):  return self._getstat('min')
     def max(self):  return self._getstat('max')
     def mean(self): return self._getstat('mean')
+    def sum(self):  return self._getstat('sum')
     def std(self):  return self._getstat('std')
 
 # ttree but slice on time
