@@ -1,4 +1,4 @@
-    # TTree object for the giant UCN hits trees
+# TTree object for the giant UCN hits trees
 # Derek Fujimoto
 # June 2025
 
@@ -12,6 +12,7 @@ import ROOT
 ROOT.EnableImplicitMT()
 
 # pre-compile stats functions to avoid memory creep during JIT compilations
+
 cpp_code = """
 Double_t RDF_min_d(ROOT::RDataFrame df, string col){
     return df.Min<Double_t>(col).GetValue();
@@ -52,6 +53,50 @@ Int_t RDF_std_i(ROOT::RDataFrame df, string col){
 Int_t RDF_sum_i(ROOT::RDataFrame df, string col){
     return df.Sum<Int_t>(col).GetValue();
 }
+
+/////////////////////////////////////////////////////////////////
+
+Double_t RDF_min_d(ROOT::RDF::RInterface<ROOT::Detail::RDF::RJittedFilter,void> df, string col){
+    return df.Min<Double_t>(col).GetValue();
+}
+
+Double_t RDF_max_d(ROOT::RDF::RInterface<ROOT::Detail::RDF::RJittedFilter,void> df, string col){
+    return df.Max<Double_t>(col).GetValue();
+}
+
+Double_t RDF_mean_d(ROOT::RDF::RInterface<ROOT::Detail::RDF::RJittedFilter,void> df, string col){
+    return df.Mean<Double_t>(col).GetValue();
+}
+
+Double_t RDF_std_d(ROOT::RDF::RInterface<ROOT::Detail::RDF::RJittedFilter,void> df, string col){
+    return df.StdDev<Double_t>(col).GetValue();
+}
+
+Double_t RDF_sum_d(ROOT::RDF::RInterface<ROOT::Detail::RDF::RJittedFilter,void> df, string col){
+    return df.Sum<Double_t>(col).GetValue();
+}
+
+Int_t RDF_min_i(ROOT::RDF::RInterface<ROOT::Detail::RDF::RJittedFilter,void> df, string col){
+    return df.Min<Int_t>(col).GetValue();
+}
+
+Int_t RDF_max_i(ROOT::RDF::RInterface<ROOT::Detail::RDF::RJittedFilter,void> df, string col){
+    return df.Max<Int_t>(col).GetValue();
+}
+
+Int_t RDF_mean_i(ROOT::RDF::RInterface<ROOT::Detail::RDF::RJittedFilter,void> df, string col){
+    return df.Mean<Int_t>(col).GetValue();
+}
+
+Int_t RDF_std_i(ROOT::RDF::RInterface<ROOT::Detail::RDF::RJittedFilter,void> df, string col){
+    return df.StdDev<Int_t>(col).GetValue();
+}
+
+Int_t RDF_sum_i(ROOT::RDF::RInterface<ROOT::Detail::RDF::RJittedFilter,void> df, string col){
+    return df.Sum<Int_t>(col).GetValue();
+}
+
+
 """
 ROOT.gInterpreter.Declare(cpp_code)
 
@@ -385,11 +430,17 @@ class ttree(object):
         vals = []
         for col in self._columns:
             dtype = self._rdf.GetColumnType(col)
+
             if dtype == 'Double_t':
                 vals.append(double_fn(self._rdf, col))
             elif dtype == 'Int_t':
                 vals.append(int_fn(self._rdf, col))
-        return pd.Series(vals, index=self._columns)
+
+        # for len = 1 outputs return only the value
+        if len(vals) == 1:
+            return vals[0]
+        else:
+            return pd.Series(vals, index=self._columns)
 
     def min(self):  return self._getstat('min')
     def max(self):  return self._getstat('max')
