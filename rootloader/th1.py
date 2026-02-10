@@ -39,7 +39,7 @@ class th1(object):
         if hist is None:
             return
 
-        if type(hist) is pd.DataFrame:
+        if isinstance(hist, pd.DataFrame):
             self._from_dataframe(hist)
             return
 
