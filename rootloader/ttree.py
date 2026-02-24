@@ -382,12 +382,16 @@ class ttree(object):
         df = pd.DataFrame(df)
 
         # set index
-        if self._index is not None and len(df.columns) > 1:
+        if self._index is not None:
             df.set_index(self._index, inplace=True)
 
         # convert to series?
         if len(df.columns) == 1:
             return df[df.columns[0]]
+        
+        # index only dataframe
+        if len(df.columns) == 0:
+            df[self._index] = df.index
 
         return df
 
