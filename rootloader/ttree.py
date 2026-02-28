@@ -361,6 +361,17 @@ class ttree(object):
             new.set_filter(expression, inplace=True)
             return new
 
+    def to_array(self):
+        """Return numpy array of the data"""
+        df = self.to_dict()
+        output = np.stack([df[k] for k in df.keys()])
+
+        # single array output for one column
+        if output.shape[0] == 1:
+            return output[0]
+        else:
+            return output
+
     def to_dataframe(self):
         """Return pandas dataframe of the data"""
 
@@ -424,7 +435,10 @@ class ttree(object):
     @property
     def size(self):
         return self._rdf.Count().GetValue()
-
+    @property
+    def values(self):
+        return self.to_array()
+    
     # STATS ================================
     def _getstat(self, fnname):
 
