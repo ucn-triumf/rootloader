@@ -19,17 +19,19 @@
     - [ttree.min](#ttreemin)
     - [ttree.reset](#ttreereset)
     - [ttree.reset_columns](#ttreereset_columns)
-    - [ttree.rms](#ttreerms)
     - [ttree.set_filter](#ttreeset_filter)
     - [ttree.set_index](#ttreeset_index)
     - [ttree.size](#ttreesize)
     - [ttree.std](#ttreestd)
+    - [ttree.sum](#ttreesum)
+    - [ttree.to_array](#ttreeto_array)
     - [ttree.to_dataframe](#ttreeto_dataframe)
     - [ttree.to_dict](#ttreeto_dict)
+    - [ttree.values](#ttreevalues)
 
 ## ttree
 
-[Show source in ttree.py:14](../../rootloader/ttree.py#L14)
+[Show source in ttree.py:103](../../rootloader/ttree.py#L103)
 
 Extract ROOT.TTree with lazy operation. Looks like a dataframe in most ways
 
@@ -48,7 +50,7 @@ class ttree(object):
 
 ### ttree.__getitem__
 
-[Show source in ttree.py:79](../../rootloader/ttree.py#L79)
+[Show source in ttree.py:165](../../rootloader/ttree.py#L165)
 
 Fetch a new dataframe with fewer 'columns', as a memory view
 
@@ -60,7 +62,7 @@ def __getitem__(self, key): ...
 
 ### ttree.columns
 
-[Show source in ttree.py:318](../../rootloader/ttree.py#L318)
+[Show source in ttree.py:420](../../rootloader/ttree.py#L420)
 
 #### Signature
 
@@ -71,7 +73,7 @@ def columns(self): ...
 
 ### ttree.filters
 
-[Show source in ttree.py:321](../../rootloader/ttree.py#L321)
+[Show source in ttree.py:423](../../rootloader/ttree.py#L423)
 
 #### Signature
 
@@ -82,7 +84,7 @@ def filters(self): ...
 
 ### ttree.hist1d
 
-[Show source in ttree.py:129](../../rootloader/ttree.py#L129)
+[Show source in ttree.py:214](../../rootloader/ttree.py#L214)
 
 Return histogram of column
 
@@ -107,7 +109,7 @@ def hist1d(self, column=None, nbins=None, step=None, edges=None): ...
 
 ### ttree.hist2d
 
-[Show source in ttree.py:182](../../rootloader/ttree.py#L182)
+[Show source in ttree.py:267](../../rootloader/ttree.py#L267)
 
 Return histogram of two columns
 
@@ -131,7 +133,7 @@ def hist2d(
 
 ### ttree.index
 
-[Show source in ttree.py:324](../../rootloader/ttree.py#L324)
+[Show source in ttree.py:426](../../rootloader/ttree.py#L426)
 
 #### Signature
 
@@ -142,7 +144,7 @@ def index(self): ...
 
 ### ttree.index_name
 
-[Show source in ttree.py:327](../../rootloader/ttree.py#L327)
+[Show source in ttree.py:429](../../rootloader/ttree.py#L429)
 
 #### Signature
 
@@ -153,7 +155,7 @@ def index_name(self): ...
 
 ### ttree.loc
 
-[Show source in ttree.py:330](../../rootloader/ttree.py#L330)
+[Show source in ttree.py:432](../../rootloader/ttree.py#L432)
 
 #### Signature
 
@@ -164,7 +166,7 @@ def loc(self): ...
 
 ### ttree.max
 
-[Show source in ttree.py:354](../../rootloader/ttree.py#L354)
+[Show source in ttree.py:464](../../rootloader/ttree.py#L464)
 
 #### Signature
 
@@ -174,7 +176,7 @@ def max(self): ...
 
 ### ttree.mean
 
-[Show source in ttree.py:359](../../rootloader/ttree.py#L359)
+[Show source in ttree.py:465](../../rootloader/ttree.py#L465)
 
 #### Signature
 
@@ -184,7 +186,7 @@ def mean(self): ...
 
 ### ttree.min
 
-[Show source in ttree.py:349](../../rootloader/ttree.py#L349)
+[Show source in ttree.py:463](../../rootloader/ttree.py#L463)
 
 #### Signature
 
@@ -194,7 +196,7 @@ def min(self): ...
 
 ### ttree.reset
 
-[Show source in ttree.py:254](../../rootloader/ttree.py#L254)
+[Show source in ttree.py:339](../../rootloader/ttree.py#L339)
 
 Make a new tree
 
@@ -206,7 +208,7 @@ def reset(self): ...
 
 ### ttree.reset_columns
 
-[Show source in ttree.py:258](../../rootloader/ttree.py#L258)
+[Show source in ttree.py:343](../../rootloader/ttree.py#L343)
 
 Include all columns again
 
@@ -216,19 +218,9 @@ Include all columns again
 def reset_columns(self): ...
 ```
 
-### ttree.rms
-
-[Show source in ttree.py:364](../../rootloader/ttree.py#L364)
-
-#### Signature
-
-```python
-def rms(self): ...
-```
-
 ### ttree.set_filter
 
-[Show source in ttree.py:268](../../rootloader/ttree.py#L268)
+[Show source in ttree.py:353](../../rootloader/ttree.py#L353)
 
 Set a filter on the dataframe to select a subset of the data
 
@@ -240,7 +232,7 @@ def set_filter(self, expression, inplace=False): ...
 
 ### ttree.set_index
 
-[Show source in ttree.py:262](../../rootloader/ttree.py#L262)
+[Show source in ttree.py:347](../../rootloader/ttree.py#L347)
 
 Set the index column name
 
@@ -252,7 +244,7 @@ def set_index(self, column): ...
 
 ### ttree.size
 
-[Show source in ttree.py:333](../../rootloader/ttree.py#L333)
+[Show source in ttree.py:435](../../rootloader/ttree.py#L435)
 
 #### Signature
 
@@ -263,7 +255,7 @@ def size(self): ...
 
 ### ttree.std
 
-[Show source in ttree.py:369](../../rootloader/ttree.py#L369)
+[Show source in ttree.py:467](../../rootloader/ttree.py#L467)
 
 #### Signature
 
@@ -271,9 +263,31 @@ def size(self): ...
 def std(self): ...
 ```
 
+### ttree.sum
+
+[Show source in ttree.py:466](../../rootloader/ttree.py#L466)
+
+#### Signature
+
+```python
+def sum(self): ...
+```
+
+### ttree.to_array
+
+[Show source in ttree.py:364](../../rootloader/ttree.py#L364)
+
+Return numpy array of the data
+
+#### Signature
+
+```python
+def to_array(self): ...
+```
+
 ### ttree.to_dataframe
 
-[Show source in ttree.py:280](../../rootloader/ttree.py#L280)
+[Show source in ttree.py:375](../../rootloader/ttree.py#L375)
 
 Return pandas dataframe of the data
 
@@ -285,10 +299,21 @@ def to_dataframe(self): ...
 
 ### ttree.to_dict
 
-[Show source in ttree.py:307](../../rootloader/ttree.py#L307)
+[Show source in ttree.py:409](../../rootloader/ttree.py#L409)
 
 #### Signature
 
 ```python
 def to_dict(self): ...
+```
+
+### ttree.values
+
+[Show source in ttree.py:438](../../rootloader/ttree.py#L438)
+
+#### Signature
+
+```python
+@property
+def values(self): ...
 ```
