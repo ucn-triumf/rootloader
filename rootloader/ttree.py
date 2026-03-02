@@ -362,7 +362,7 @@ class ttree(object):
             return new
 
     def to_array(self):
-        """Return numpy array of the data"""
+        """Return ttree data as 1D or 2D numpy array (depending on number of columns)"""
         df = self.to_dict()
         output = np.stack([df[k] for k in df.keys()])
 
@@ -373,7 +373,7 @@ class ttree(object):
             return output
 
     def to_dataframe(self):
-        """Return pandas dataframe of the data"""
+        """Return ttree data as pandas dataframe"""
 
         df = self.to_dict()
 
@@ -407,7 +407,7 @@ class ttree(object):
         return df
 
     def to_dict(self):
-
+        """Return ttree data as dict of numpy arrays"""
         # ensure index is loaded
         if self._index not in self._columns and self._index is not None:
             columns = [*self._columns, self._index]
@@ -419,24 +419,31 @@ class ttree(object):
     # PROPERTIES ===========================
     @property
     def columns(self):
+        """Return list of column (branch) names"""
         return self._columns
     @property
     def filters(self):
+        """Return list of RDataFrame filters"""
         return self._filters
     @property
     def index(self):
+        """Return ttree of just the index data"""
         return self[self._index]
     @property
     def index_name(self):
+        """Return string of the name of the index branch"""
         return self._index
     @property
     def loc(self):
+        """Return a ttree that can be indexed like a pandas dataframe"""
         return _ttree_indexed(self)
     @property
     def size(self):
+        """Return the number of rows in the ttree"""
         return self._rdf.Count().GetValue()
     @property
     def values(self):
+        """Convert ttree 1D or 2D numpy array (depending on number of columns)"""
         return self.to_array()
     
     # STATS ================================
@@ -460,11 +467,21 @@ class ttree(object):
         else:
             return pd.Series(vals, index=self._columns)
 
-    def min(self):  return self._getstat('min')
-    def max(self):  return self._getstat('max')
-    def mean(self): return self._getstat('mean')
-    def sum(self):  return self._getstat('sum')
-    def std(self):  return self._getstat('std')
+    def min(self):  
+        """Return the min value of the tree, for each branch"""
+        return self._getstat('min')
+    def max(self):  
+        """Return the max value of the tree, for each branch"""
+        return self._getstat('max')
+    def mean(self): 
+        """Return the mean value of the tree, for each branch"""
+        return self._getstat('mean')
+    def sum(self):  
+        """Return the sum of the values of the tree, for each branch"""
+        return self._getstat('sum')
+    def std(self):  
+        """Return the standard deviationif the of values the tree, for each branch"""
+        return self._getstat('std')
 
 # ttree but slice on time
 class _ttree_indexed(object):

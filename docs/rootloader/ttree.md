@@ -64,6 +64,8 @@ def __getitem__(self, key): ...
 
 [Show source in ttree.py:420](../../rootloader/ttree.py#L420)
 
+Return list of column (branch) names
+
 #### Signature
 
 ```python
@@ -73,7 +75,9 @@ def columns(self): ...
 
 ### ttree.filters
 
-[Show source in ttree.py:423](../../rootloader/ttree.py#L423)
+[Show source in ttree.py:424](../../rootloader/ttree.py#L424)
+
+Return list of RDataFrame filters
 
 #### Signature
 
@@ -133,7 +137,9 @@ def hist2d(
 
 ### ttree.index
 
-[Show source in ttree.py:426](../../rootloader/ttree.py#L426)
+[Show source in ttree.py:428](../../rootloader/ttree.py#L428)
+
+Return ttree of just the index data
 
 #### Signature
 
@@ -144,7 +150,9 @@ def index(self): ...
 
 ### ttree.index_name
 
-[Show source in ttree.py:429](../../rootloader/ttree.py#L429)
+[Show source in ttree.py:432](../../rootloader/ttree.py#L432)
+
+Return string of the name of the index branch
 
 #### Signature
 
@@ -155,7 +163,9 @@ def index_name(self): ...
 
 ### ttree.loc
 
-[Show source in ttree.py:432](../../rootloader/ttree.py#L432)
+[Show source in ttree.py:436](../../rootloader/ttree.py#L436)
+
+Return a ttree that can be indexed like a pandas dataframe
 
 #### Signature
 
@@ -166,7 +176,9 @@ def loc(self): ...
 
 ### ttree.max
 
-[Show source in ttree.py:464](../../rootloader/ttree.py#L464)
+[Show source in ttree.py:473](../../rootloader/ttree.py#L473)
+
+Return the max value of the tree, for each branch
 
 #### Signature
 
@@ -176,7 +188,9 @@ def max(self): ...
 
 ### ttree.mean
 
-[Show source in ttree.py:465](../../rootloader/ttree.py#L465)
+[Show source in ttree.py:476](../../rootloader/ttree.py#L476)
+
+Return the mean value of the tree, for each branch
 
 #### Signature
 
@@ -186,7 +200,9 @@ def mean(self): ...
 
 ### ttree.min
 
-[Show source in ttree.py:463](../../rootloader/ttree.py#L463)
+[Show source in ttree.py:470](../../rootloader/ttree.py#L470)
+
+Return the min value of the tree, for each branch
 
 #### Signature
 
@@ -244,7 +260,9 @@ def set_index(self, column): ...
 
 ### ttree.size
 
-[Show source in ttree.py:435](../../rootloader/ttree.py#L435)
+[Show source in ttree.py:440](../../rootloader/ttree.py#L440)
+
+Return the number of rows in the ttree
 
 #### Signature
 
@@ -255,7 +273,9 @@ def size(self): ...
 
 ### ttree.std
 
-[Show source in ttree.py:467](../../rootloader/ttree.py#L467)
+[Show source in ttree.py:482](../../rootloader/ttree.py#L482)
+
+Return the standard deviationif the of values the tree, for each branch
 
 #### Signature
 
@@ -265,7 +285,9 @@ def std(self): ...
 
 ### ttree.sum
 
-[Show source in ttree.py:466](../../rootloader/ttree.py#L466)
+[Show source in ttree.py:479](../../rootloader/ttree.py#L479)
+
+Return the sum of the values of the tree, for each branch
 
 #### Signature
 
@@ -277,7 +299,7 @@ def sum(self): ...
 
 [Show source in ttree.py:364](../../rootloader/ttree.py#L364)
 
-Return numpy array of the data
+Return ttree data as 1D or 2D numpy array (depending on number of columns)
 
 #### Signature
 
@@ -289,7 +311,7 @@ def to_array(self): ...
 
 [Show source in ttree.py:375](../../rootloader/ttree.py#L375)
 
-Return pandas dataframe of the data
+Return ttree data as pandas dataframe
 
 #### Signature
 
@@ -301,6 +323,8 @@ def to_dataframe(self): ...
 
 [Show source in ttree.py:409](../../rootloader/ttree.py#L409)
 
+Return ttree data as dict of numpy arrays
+
 #### Signature
 
 ```python
@@ -309,7 +333,9 @@ def to_dict(self): ...
 
 ### ttree.values
 
-[Show source in ttree.py:438](../../rootloader/ttree.py#L438)
+[Show source in ttree.py:444](../../rootloader/ttree.py#L444)
+
+Convert ttree 1D or 2D numpy array (depending on number of columns)
 
 #### Signature
 
