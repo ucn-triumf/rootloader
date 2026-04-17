@@ -11,37 +11,13 @@ import os
 import ROOT
 ROOT.EnableImplicitMT()
 
-# pre-compile stats functions to avoid memory creep during JIT compilations
-
+# template to pre-compile stats functions to avoid memory creep during JIT compilations
+# used in ttree._get_stat
 cpp_template = """
-{TYPE2} RDF_min_{TYPE2}({TYPE1} df, string col){
-    return df.Min<{TYPE2}>(col).GetValue();
+{TYPE2} RDF_{FNNAME}_{TYPE2}({DTYPE} df, string col){
+    return df.{FNNAME}<{TYPE2}>(col).GetValue();
 }
-
-{TYPE2} RDF_max_{TYPE2}({TYPE1} df, string col){
-    return df.Max<{TYPE2}>(col).GetValue();
-}
-
-{TYPE2} RDF_mean_{TYPE2}({TYPE1} df, string col){
-    return df.Mean<{TYPE2}>(col).GetValue();
-}
-
-{TYPE2} RDF_std_{TYPE2}({TYPE1} df, string col){
-    return df.StdDev<{TYPE2}>(col).GetValue();
-}
-
-{TYPE2} RDF_sum_{TYPE2}({TYPE1} df, string col){
-    return df.Sum<{TYPE2}>(col).GetValue();
-}
-
 """
-
-cpp_code = ""
-for type1 in [r'ROOT::RDataFrame', r'ROOT::RDF::RInterface<ROOT::Detail::RDF::RJittedFilter,void>']:
-    for type2 in ['Double_t', 'Int_t', 'UShort_t', 'ULong64_t', 'Float16_t']:
-        cpp_code += cpp_template.replace('{TYPE1}', type1).replace('{TYPE2}', type2)       
-
-ROOT.gInterpreter.Declare(cpp_code)
 
 class ttree(object):
     """Extract ROOT.TTree with lazy operation. Looks like a dataframe in most ways
@@ -394,7 +370,19 @@ class ttree(object):
         vals = []
         for col in self._columns:
             dtype = self._rdf.GetColumnType(col)
-            vals.append(getattr(ROOT, f'RDF_{fnname}_{dtype}')(self._rdf, col))
+
+            # pre-compile function 
+            fn_name = f'RDF_{fnname}_{dtype}'
+            if not hasattr(ROOT, fn_name):
+                for type1 in [r'ROOT::RDataFrame', 
+                              r'ROOT::RDF::RInterface<ROOT::Detail::RDF::RJittedFilter,void>']:
+                    cpp_code = cpp_template.replace('{DTYPE}', type1)
+                    cpp_code = cpp_code.replace('{TYPE2}', dtype)       
+                    cpp_code = cpp_code.replace('{FNNAME}', fnname)       
+                    ROOT.gInterpreter.Declare(cpp_code)
+                    
+            # do the computation
+            vals.append(getattr(ROOT, fn_name)(self._rdf, col))
 
         # for len = 1 outputs return only the value
         if len(vals) == 1:
@@ -404,19 +392,19 @@ class ttree(object):
 
     def min(self):  
         """Return the min value of the tree, for each branch"""
-        return self._getstat('min')
+        return self._getstat('Min')
     def max(self):  
         """Return the max value of the tree, for each branch"""
-        return self._getstat('max')
+        return self._getstat('Max')
     def mean(self): 
         """Return the mean value of the tree, for each branch"""
-        return self._getstat('mean')
+        return self._getstat('Mean')
     def sum(self):  
         """Return the sum of the values of the tree, for each branch"""
-        return self._getstat('sum')
+        return self._getstat('Sum')
     def std(self):  
         """Return the standard deviationif the of values the tree, for each branch"""
-        return self._getstat('std')
+        return self._getstat('StdDev')
 
 # ttree but slice on time
 class _ttree_indexed(object):
