@@ -13,91 +13,34 @@ ROOT.EnableImplicitMT()
 
 # pre-compile stats functions to avoid memory creep during JIT compilations
 
-cpp_code = """
-Double_t RDF_min_d(ROOT::RDataFrame df, string col){
-    return df.Min<Double_t>(col).GetValue();
+cpp_template = """
+{TYPE2} RDF_min_{TYPE2}({TYPE1} df, string col){
+    return df.Min<{TYPE2}>(col).GetValue();
 }
 
-Double_t RDF_max_d(ROOT::RDataFrame df, string col){
-    return df.Max<Double_t>(col).GetValue();
+{TYPE2} RDF_max_{TYPE2}({TYPE1} df, string col){
+    return df.Max<{TYPE2}>(col).GetValue();
 }
 
-Double_t RDF_mean_d(ROOT::RDataFrame df, string col){
-    return df.Mean<Double_t>(col).GetValue();
+{TYPE2} RDF_mean_{TYPE2}({TYPE1} df, string col){
+    return df.Mean<{TYPE2}>(col).GetValue();
 }
 
-Double_t RDF_std_d(ROOT::RDataFrame df, string col){
-    return df.StdDev<Double_t>(col).GetValue();
+{TYPE2} RDF_std_{TYPE2}({TYPE1} df, string col){
+    return df.StdDev<{TYPE2}>(col).GetValue();
 }
 
-Double_t RDF_sum_d(ROOT::RDataFrame df, string col){
-    return df.Sum<Double_t>(col).GetValue();
+{TYPE2} RDF_sum_{TYPE2}({TYPE1} df, string col){
+    return df.Sum<{TYPE2}>(col).GetValue();
 }
-
-Int_t RDF_min_i(ROOT::RDataFrame df, string col){
-    return df.Min<Int_t>(col).GetValue();
-}
-
-Int_t RDF_max_i(ROOT::RDataFrame df, string col){
-    return df.Max<Int_t>(col).GetValue();
-}
-
-Int_t RDF_mean_i(ROOT::RDataFrame df, string col){
-    return df.Mean<Int_t>(col).GetValue();
-}
-
-Int_t RDF_std_i(ROOT::RDataFrame df, string col){
-    return df.StdDev<Int_t>(col).GetValue();
-}
-
-Int_t RDF_sum_i(ROOT::RDataFrame df, string col){
-    return df.Sum<Int_t>(col).GetValue();
-}
-
-/////////////////////////////////////////////////////////////////
-
-Double_t RDF_min_d(ROOT::RDF::RInterface<ROOT::Detail::RDF::RJittedFilter,void> df, string col){
-    return df.Min<Double_t>(col).GetValue();
-}
-
-Double_t RDF_max_d(ROOT::RDF::RInterface<ROOT::Detail::RDF::RJittedFilter,void> df, string col){
-    return df.Max<Double_t>(col).GetValue();
-}
-
-Double_t RDF_mean_d(ROOT::RDF::RInterface<ROOT::Detail::RDF::RJittedFilter,void> df, string col){
-    return df.Mean<Double_t>(col).GetValue();
-}
-
-Double_t RDF_std_d(ROOT::RDF::RInterface<ROOT::Detail::RDF::RJittedFilter,void> df, string col){
-    return df.StdDev<Double_t>(col).GetValue();
-}
-
-Double_t RDF_sum_d(ROOT::RDF::RInterface<ROOT::Detail::RDF::RJittedFilter,void> df, string col){
-    return df.Sum<Double_t>(col).GetValue();
-}
-
-Int_t RDF_min_i(ROOT::RDF::RInterface<ROOT::Detail::RDF::RJittedFilter,void> df, string col){
-    return df.Min<Int_t>(col).GetValue();
-}
-
-Int_t RDF_max_i(ROOT::RDF::RInterface<ROOT::Detail::RDF::RJittedFilter,void> df, string col){
-    return df.Max<Int_t>(col).GetValue();
-}
-
-Int_t RDF_mean_i(ROOT::RDF::RInterface<ROOT::Detail::RDF::RJittedFilter,void> df, string col){
-    return df.Mean<Int_t>(col).GetValue();
-}
-
-Int_t RDF_std_i(ROOT::RDF::RInterface<ROOT::Detail::RDF::RJittedFilter,void> df, string col){
-    return df.StdDev<Int_t>(col).GetValue();
-}
-
-Int_t RDF_sum_i(ROOT::RDF::RInterface<ROOT::Detail::RDF::RJittedFilter,void> df, string col){
-    return df.Sum<Int_t>(col).GetValue();
-}
-
 
 """
+
+cpp_code = ""
+for type1 in [r'ROOT::RDataFrame', r'ROOT::RDF::RInterface<ROOT::Detail::RDF::RJittedFilter,void>']:
+    for type2 in ['Double_t', 'Int_t', 'UShort_t', 'ULong64_t', 'Float16_t']:
+        cpp_code += cpp_template.replace('{TYPE1}', type1).replace('{TYPE2}', type2)       
+
 ROOT.gInterpreter.Declare(cpp_code)
 
 class ttree(object):
@@ -448,18 +391,10 @@ class ttree(object):
     
     # STATS ================================
     def _getstat(self, fnname):
-
-        double_fn = getattr(ROOT, f'RDF_{fnname}_d')
-        int_fn = getattr(ROOT, f'RDF_{fnname}_i')
-
         vals = []
         for col in self._columns:
             dtype = self._rdf.GetColumnType(col)
-
-            if dtype == 'Double_t':
-                vals.append(double_fn(self._rdf, col))
-            elif dtype == 'Int_t':
-                vals.append(int_fn(self._rdf, col))
+            vals.append(getattr(ROOT, f'RDF_{fnname}_{dtype}')(self._rdf, col))
 
         # for len = 1 outputs return only the value
         if len(vals) == 1:
