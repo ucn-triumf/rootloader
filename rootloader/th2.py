@@ -143,7 +143,8 @@ class th2(object):
 
             if ax is None:
                 plt.figure()
-                ax = plt.gca().add_subplot(projection='3d')
+                # add_subplot is a Figure method, not an Axes method
+                ax = plt.gcf().add_subplot(111, projection='3d')
 
             ax.plot_surface(xx, yy, self.z, **kwargs)
 
