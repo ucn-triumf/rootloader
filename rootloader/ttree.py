@@ -28,7 +28,7 @@ class ttree(object):
         columns (list|None): list of column names to include in fetch, if None, get all
     """
 
-    def __init__(self, tree):
+    def __init__(self, tree, filter_string=None, columns=None):
 
         # copy
         if isinstance(tree, ttree):
@@ -70,6 +70,12 @@ class ttree(object):
         # set filters
         for filt in self._filters:
             self._rdf = self._rdf.Filter(filt, filt)
+
+        # apply filter and column selection passed to the constructor
+        if filter_string is not None:
+            self.set_filter(filter_string, inplace=True)
+        if columns is not None:
+            self._columns = tuple(columns)
 
     def __dir__(self):
         superdir = [d for d in super().__dir__() if d[0] != '_']
@@ -427,6 +433,6 @@ class _ttree_indexed(object):
                 raise NotImplementedError('Slicing steps not implemented')
 
         elif isinstance(key, (int, float)):
-            tr.set_filter(f'{self._index} == {key}', inplace=True)
+            tr.set_filter(f'{tr._index} == {key}', inplace=True)
 
         return tr

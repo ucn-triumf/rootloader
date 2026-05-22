@@ -65,7 +65,12 @@ class tdirectory(attrdict):
             # TTree
             if 'TTree' == classname:
                 if empty_ok or obj.GetEntries() > 0:
-                    self[name] = ttree(obj)
+                    if name in tree_filter:
+                        filter_string, columns = tree_filter[name]
+                        self[name] = ttree(obj, filter_string=filter_string,
+                                           columns=columns)
+                    else:
+                        self[name] = ttree(obj)
                 elif not quiet:
                     tqdm.write(f'Skipped "{name}" due to lack of entries')
 

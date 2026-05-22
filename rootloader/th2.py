@@ -71,7 +71,7 @@ class th2(object):
         self.dz = self.dz.transpose()
 
     def __len__(self):
-        return self.nbins
+        return self.nbinsx * self.nbinsy
 
     def __repr__(self):
         return f'{self.base_class}: "{self.name}", {self.entries} entries, sum = {self.sum}'
