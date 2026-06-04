@@ -4,6 +4,12 @@
 
 > Auto-generated documentation for [rootloader.ttree](../../rootloader/ttree.py) module.
 
+#### Attributes
+
+- `cpp_template` - template to pre-compile stats functions to avoid memory creep during JIT compilations
+  used in ttree._get_stat: '\n{TYPE2} RDF_{FNNAME}_{TYPE2}({DTYPE} df, string col){\n    return df.{FNNAME}<{TYPE2}>(col).GetValue.\n}\n'
+
+
 - [ttree](#ttree)
   - [ttree](#ttree-1)
     - [ttree.__getitem__](#ttree__getitem__)
@@ -31,7 +37,7 @@
 
 ## ttree
 
-[Show source in ttree.py:103](../../rootloader/ttree.py#L103)
+[Show source in ttree.py:22](../../rootloader/ttree.py#L22)
 
 Extract ROOT.TTree with lazy operation. Looks like a dataframe in most ways
 
@@ -45,12 +51,12 @@ Extract ROOT.TTree with lazy operation. Looks like a dataframe in most ways
 
 ```python
 class ttree(object):
-    def __init__(self, tree): ...
+    def __init__(self, tree, filter_string=None, columns=None): ...
 ```
 
 ### ttree.__getitem__
 
-[Show source in ttree.py:165](../../rootloader/ttree.py#L165)
+[Show source in ttree.py:90](../../rootloader/ttree.py#L90)
 
 Fetch a new dataframe with fewer 'columns', as a memory view
 
@@ -62,7 +68,7 @@ def __getitem__(self, key): ...
 
 ### ttree.columns
 
-[Show source in ttree.py:420](../../rootloader/ttree.py#L420)
+[Show source in ttree.py:345](../../rootloader/ttree.py#L345)
 
 Return list of column (branch) names
 
@@ -75,7 +81,7 @@ def columns(self): ...
 
 ### ttree.filters
 
-[Show source in ttree.py:424](../../rootloader/ttree.py#L424)
+[Show source in ttree.py:349](../../rootloader/ttree.py#L349)
 
 Return list of RDataFrame filters
 
@@ -88,7 +94,7 @@ def filters(self): ...
 
 ### ttree.hist1d
 
-[Show source in ttree.py:214](../../rootloader/ttree.py#L214)
+[Show source in ttree.py:139](../../rootloader/ttree.py#L139)
 
 Return histogram of column
 
@@ -113,7 +119,7 @@ def hist1d(self, column=None, nbins=None, step=None, edges=None): ...
 
 ### ttree.hist2d
 
-[Show source in ttree.py:267](../../rootloader/ttree.py#L267)
+[Show source in ttree.py:192](../../rootloader/ttree.py#L192)
 
 Return histogram of two columns
 
@@ -137,7 +143,7 @@ def hist2d(
 
 ### ttree.index
 
-[Show source in ttree.py:428](../../rootloader/ttree.py#L428)
+[Show source in ttree.py:353](../../rootloader/ttree.py#L353)
 
 Return ttree of just the index data
 
@@ -150,7 +156,7 @@ def index(self): ...
 
 ### ttree.index_name
 
-[Show source in ttree.py:432](../../rootloader/ttree.py#L432)
+[Show source in ttree.py:357](../../rootloader/ttree.py#L357)
 
 Return string of the name of the index branch
 
@@ -163,7 +169,7 @@ def index_name(self): ...
 
 ### ttree.loc
 
-[Show source in ttree.py:436](../../rootloader/ttree.py#L436)
+[Show source in ttree.py:361](../../rootloader/ttree.py#L361)
 
 Return a ttree that can be indexed like a pandas dataframe
 
@@ -176,7 +182,7 @@ def loc(self): ...
 
 ### ttree.max
 
-[Show source in ttree.py:473](../../rootloader/ttree.py#L473)
+[Show source in ttree.py:402](../../rootloader/ttree.py#L402)
 
 Return the max value of the tree, for each branch
 
@@ -188,7 +194,7 @@ def max(self): ...
 
 ### ttree.mean
 
-[Show source in ttree.py:476](../../rootloader/ttree.py#L476)
+[Show source in ttree.py:405](../../rootloader/ttree.py#L405)
 
 Return the mean value of the tree, for each branch
 
@@ -200,7 +206,7 @@ def mean(self): ...
 
 ### ttree.min
 
-[Show source in ttree.py:470](../../rootloader/ttree.py#L470)
+[Show source in ttree.py:399](../../rootloader/ttree.py#L399)
 
 Return the min value of the tree, for each branch
 
@@ -212,7 +218,7 @@ def min(self): ...
 
 ### ttree.reset
 
-[Show source in ttree.py:339](../../rootloader/ttree.py#L339)
+[Show source in ttree.py:264](../../rootloader/ttree.py#L264)
 
 Make a new tree
 
@@ -224,7 +230,7 @@ def reset(self): ...
 
 ### ttree.reset_columns
 
-[Show source in ttree.py:343](../../rootloader/ttree.py#L343)
+[Show source in ttree.py:268](../../rootloader/ttree.py#L268)
 
 Include all columns again
 
@@ -236,7 +242,7 @@ def reset_columns(self): ...
 
 ### ttree.set_filter
 
-[Show source in ttree.py:353](../../rootloader/ttree.py#L353)
+[Show source in ttree.py:278](../../rootloader/ttree.py#L278)
 
 Set a filter on the dataframe to select a subset of the data
 
@@ -248,7 +254,7 @@ def set_filter(self, expression, inplace=False): ...
 
 ### ttree.set_index
 
-[Show source in ttree.py:347](../../rootloader/ttree.py#L347)
+[Show source in ttree.py:272](../../rootloader/ttree.py#L272)
 
 Set the index column name
 
@@ -260,7 +266,7 @@ def set_index(self, column): ...
 
 ### ttree.size
 
-[Show source in ttree.py:440](../../rootloader/ttree.py#L440)
+[Show source in ttree.py:365](../../rootloader/ttree.py#L365)
 
 Return the number of rows in the ttree
 
@@ -273,7 +279,7 @@ def size(self): ...
 
 ### ttree.std
 
-[Show source in ttree.py:482](../../rootloader/ttree.py#L482)
+[Show source in ttree.py:411](../../rootloader/ttree.py#L411)
 
 Return the standard deviationif the of values the tree, for each branch
 
@@ -285,7 +291,7 @@ def std(self): ...
 
 ### ttree.sum
 
-[Show source in ttree.py:479](../../rootloader/ttree.py#L479)
+[Show source in ttree.py:408](../../rootloader/ttree.py#L408)
 
 Return the sum of the values of the tree, for each branch
 
@@ -297,7 +303,7 @@ def sum(self): ...
 
 ### ttree.to_array
 
-[Show source in ttree.py:364](../../rootloader/ttree.py#L364)
+[Show source in ttree.py:289](../../rootloader/ttree.py#L289)
 
 Return ttree data as 1D or 2D numpy array (depending on number of columns)
 
@@ -309,7 +315,7 @@ def to_array(self): ...
 
 ### ttree.to_dataframe
 
-[Show source in ttree.py:375](../../rootloader/ttree.py#L375)
+[Show source in ttree.py:300](../../rootloader/ttree.py#L300)
 
 Return ttree data as pandas dataframe
 
@@ -321,7 +327,7 @@ def to_dataframe(self): ...
 
 ### ttree.to_dict
 
-[Show source in ttree.py:409](../../rootloader/ttree.py#L409)
+[Show source in ttree.py:334](../../rootloader/ttree.py#L334)
 
 Return ttree data as dict of numpy arrays
 
@@ -333,7 +339,7 @@ def to_dict(self): ...
 
 ### ttree.values
 
-[Show source in ttree.py:444](../../rootloader/ttree.py#L444)
+[Show source in ttree.py:369](../../rootloader/ttree.py#L369)
 
 Convert ttree 1D or 2D numpy array (depending on number of columns)
 
