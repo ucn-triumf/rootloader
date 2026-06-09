@@ -319,6 +319,8 @@ class ttree(object):
 
         # set index
         if self._index is not None:
+            if self._index not in df.columns:
+                df[self._index] = self._rdf.AsNumpy(columns=[self._index])
             df.set_index(self._index, inplace=True)
 
         # convert to series?
@@ -333,13 +335,7 @@ class ttree(object):
 
     def to_dict(self):
         """Return ttree data as dict of numpy arrays"""
-        # ensure index is loaded
-        if self._index not in self._columns and self._index is not None:
-            columns = [*self._columns, self._index]
-        else:
-            columns = self._columns
-
-        return self._rdf.AsNumpy(columns=columns)
+        return self._rdf.AsNumpy(columns=self._columns)
 
     # PROPERTIES ===========================
     @property
