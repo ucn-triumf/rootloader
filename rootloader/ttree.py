@@ -320,7 +320,7 @@ class ttree(object):
         # set index
         if self._index is not None:
             if self._index not in df.columns:
-                df[self._index] = self._rdf.AsNumpy(columns=[self._index])
+                df[self._index] = self._rdf.AsNumpy(columns=[self._index])[self._index]
             df.set_index(self._index, inplace=True)
 
         # convert to series?
