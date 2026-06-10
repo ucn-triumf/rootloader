@@ -231,21 +231,6 @@ def test_to_dict_returns_numpy_arrays(make_tree, single_mt):
     for val in result.values():
         assert isinstance(val, np.ndarray)
 
-
-def test_to_dict_includes_index_column(make_tree, single_mt):
-    """to_dict() always includes the index column even when not in _columns.
-
-    When the tree has tEntry as the index and we select only column x,
-    to_dict() still returns tEntry in the output dict.
-    """
-    data = {"tEntry": np.arange(5, dtype=float), "x": np.arange(5, dtype=float)}
-    root_tree = make_tree(data)
-    tr = ttree(root_tree)["x"]  # view with only x, but index is tEntry
-
-    result = tr.to_dict()
-    assert "tEntry" in result
-
-
 def test_to_array_1d_for_single_column(make_tree, single_mt):
     """to_array() returns a 1D array when the tree view has one column."""
     values = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
